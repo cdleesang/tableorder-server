@@ -7,12 +7,11 @@ import { WWWSelversClientService } from './www-selvers-client.service';
 
 @Module({
   imports: [
-    ConfigModule,
     HttpModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         headers: {
-          'x-selvers-api-v2-access-token': configService.get('accessToken'),
+          'x-selvers-api-v2-access-token': configService.get('ACCESS_TOKEN'),
         },
       }),
       inject: [ConfigService],

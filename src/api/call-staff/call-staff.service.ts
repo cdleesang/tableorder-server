@@ -42,10 +42,10 @@ export class CallStaffService {
       });
 
       return this.easyCallSelversClientService.callStaff(
-        tableId.toString(),
+        result!.storeTableId!,
         options.map(option => ({
           ...option,
-          id: result!.storeTableId,
+          id: option.id.toString(),
           count: option.quantity,
         })),
       );

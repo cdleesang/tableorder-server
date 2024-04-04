@@ -24,18 +24,18 @@ export class EasycallSelversClientService {
     const { data } = await firstValueFrom(
       this.httpService.get<EasycallSetupListResponse>(url, {
         params: {
-          store_id: this.configService.get('storeId'),
+          store_id: this.configService.get('STORE_ID'),
         },
       }).pipe(
         catchError((error: AxiosError) => {
-          console.error('[직원 호출 옵션 조회] Axios Error: ', error);
+          console.error('[직원 호출 옵션 조회] Axios Error\n', error);
           throw new Error('직원 호출 옵션 조회에 실패했습니다.');
         }),
       ),
     );
 
     if(data.result !== 'ok') {
-      console.error('[직원 호출 옵션 조회] Response Error: ', data);
+      console.error('[직원 호출 옵션 조회] Response Error\n', data);
       throw new Error('직원 호출 옵션 조회에 실패했습니다.');
     }
 
@@ -59,7 +59,7 @@ export class EasycallSelversClientService {
     const url = `${this.BASE_URL}/api/easyCall/v2/reqEasyCall.json`;
 
     const params = new URLSearchParams();
-    params.append('store_id', this.configService.get('storeId') || '');
+    params.append('store_id', this.configService.get('STORE_ID') || '');
     params.append('store_table_id', tableId);
 
     options.forEach((option, index) => {
@@ -73,18 +73,26 @@ export class EasycallSelversClientService {
 
     const { data } = await firstValueFrom(
       this.httpService.post<EasycallCallStaffResponse>(url, params, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        },
+        headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
       })
         .pipe(catchError((error: AxiosError) => {
-          console.error('[직원 호출] Axios Error: ', error);
+          console.error(
+            '[직원 호출] Axios Error\n',
+            `tableId: ${tableId}\n`,
+            `options: ${JSON.stringify(options)}\n`,
+            error,
+          );
           throw new Error('직원 호출에 실패했습니다.');
         })),
     );
 
     if(data.result !== 'ok') {
-      console.error('[직원 호출] Response Error: ', data);
+      console.error(
+        '[직원 호출] Response Error\n',
+        `tableId: ${tableId}\n`,
+        `options: ${JSON.stringify(options)}\n`,
+        data,
+      );
       throw new Error('직원 호출에 실패했습니다.');
     }
 

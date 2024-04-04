@@ -12,16 +12,12 @@ datasource db {
 
 model Table {
   // Selvers Shared Preference seq
-  id            Int    @id
+  id           Int     @id
   // Selvers Shared Preference member_id
-  memberId      String @unique
-  // Selvers Shared Preference store_member_id
-  storeMemberId String @unique
+  memberId     String? @unique
   // Selvers Shared Preference store_table_id
-  storeTableId  String @unique
+  storeTableId String? @unique
 
-  // Selvers Table user id
-  userId String
-  // Selvers Table user password
-  userPw String
+  signInId String
+  password String
 }

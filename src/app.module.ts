@@ -5,7 +5,7 @@ import { PrismaModule } from './providers/prisma/prisma.module';
 
 @Module({
   imports: [
-    PrismaModule.forRoot(),
+    PrismaModule,
     ConfigModule,
     CallStaffModule,
   ],
