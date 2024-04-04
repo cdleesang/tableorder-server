@@ -1,0 +1,27 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Table {
+  // Selvers Shared Preference seq
+  id            Int    @id
+  // Selvers Shared Preference member_id
+  memberId      String @unique
+  // Selvers Shared Preference store_member_id
+  storeMemberId String @unique
+  // Selvers Shared Preference store_table_id
+  storeTableId  String @unique
+
+  // Selvers Table user id
+  userId String
+  // Selvers Table user password
+  userPw String
+}
