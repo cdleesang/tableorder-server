@@ -2,23 +2,20 @@ import { Injectable, InternalServerErrorException, NotFoundException } from '@ne
 import { EasycallSelversClientService } from '../../providers/selvers-client/easycall-selvers-client.service';
 import { PrismaService } from '../../providers/prisma/prisma.service';
 import { EntityNotFoundErrors } from '../../providers/prisma/errors/entity-not-found.error';
+import { ConfigService } from '../../config/config.service';
+import { GetCallStaffOptionsResponse } from './types/call-staff-response.type';
 
 @Injectable()
 export class CallStaffService {
   constructor(
+    private readonly configService: ConfigService,
     private readonly easyCallSelversClientService: EasycallSelversClientService,
     private readonly prismaService: PrismaService,
   ) {}
 
-  async getCallOptions(): Promise<{
-    /** 직원호출옵션 고유 아이디 */
-    id: number;
-    /** 직원호출 표시명 */
-    title: string;
-    /** 수량 선택 가능 여부 */
-    isCountable: boolean;
-  }[]> {
-    const data = await this.easyCallSelversClientService.getCallStaffOptions();
+  async getCallOptions(): Promise<GetCallStaffOptionsResponse> {
+    const storeId = this.configService.get('STORE_ID');
+    const data = await this.easyCallSelversClientService.getCallStaffOptions(storeId);
 
     return data.items.map(item => ({
       id: parseInt(item.EasyCallSetup.id, 10),
@@ -40,8 +37,9 @@ export class CallStaffService {
         select: { storeTableId: true },
         where: { id: tableId },
       });
-
+      const storeId = this.configService.get('STORE_ID');
       return this.easyCallSelversClientService.callStaff(
+        storeId,
         result!.storeTableId!,
         options.map(option => ({
           ...option,

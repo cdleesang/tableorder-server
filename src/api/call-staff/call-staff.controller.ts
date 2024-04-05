@@ -1,7 +1,8 @@
 import { TypedBody, TypedRoute } from '@nestia/core';
 import { Controller } from '@nestjs/common';
 import { CallStaffService } from './call-staff.service';
-import { CallStaffBody } from './types/call-staff.controller.interface';
+import { CallStaffBody } from './types/call-staff-request.type';
+import { GetCallStaffOptionsResponse } from './types/call-staff-response.type';
 
 @Controller('call-staff')
 export class CallStaffController {
@@ -13,7 +14,7 @@ export class CallStaffController {
    * @tag 직원호출
    */
   @TypedRoute.Get('option')
-  getCallStaffOptions() {
+  getCallStaffOptions(): Promise<GetCallStaffOptionsResponse> {
     return this.callStaffService.getCallOptions();
   }
 
@@ -23,7 +24,7 @@ export class CallStaffController {
    * @tag 직원호출
    */
   @TypedRoute.Post()
-  callStaff(@TypedBody() body: CallStaffBody) {
+  callStaff(@TypedBody() body: CallStaffBody): Promise<true> {
     return this.callStaffService.callStaff(body.tableId, body.options);
   }
 }

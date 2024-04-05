@@ -19,3 +19,13 @@ export type EasycallOptionId = NumericString;
  */
 /** 테이블 고유 아이디 */
 export type TableId = NumericString;
+
+/**
+ * Food
+ */
+/** 메뉴 고유 아이디 */
+export type FoodId = NumericString;
+/** 세트메뉴 옵션 그룹 고유 아이디 */
+export type FoodOptionGroupId = NumericString;
+/** 세트메뉴 옵션 고유 아이디 */
+export type FoodOptionId = NumericString;

@@ -1,51 +1,38 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { AxiosError } from 'axios';
-import { catchError, firstValueFrom } from 'rxjs';
-import { ConfigService } from '../../config/config.service';
 import { EasycallCallStaffResponse, EasycallSetupListResponse } from './types/easycall-selver-client-response.type';
-import { EasycallOptionId, TableId } from './types/selvers-client.type';
+import { EasycallOptionId, StoreId, TableId } from './types/selvers-client.type';
+import { responseErrorHandle } from './utils/response-error-handle.util';
 
 @Injectable()
 export class EasycallSelversClientService {
-  private readonly BASE_URL = 'http://easycall.selfood.co.kr';
+  constructor(private readonly httpService: HttpService) {}
 
-  constructor(
-    private readonly httpService: HttpService,
-    private readonly configService: ConfigService,
-  ) {}
+  private genFullPath(url: string) {
+    return `http://easycall.selfood.co.kr${url}`;
+  }
 
   /**
    * 직원 호출 옵션 조회
    */
-  async getCallStaffOptions() {
-    const url = `${this.BASE_URL}/api/easyCall/v2/easyCallSetupList.json`;
+  async getCallStaffOptions(storeId: StoreId) {
+    const url = this.genFullPath('/api/easyCall/v2/easyCallSetupList.json');
 
-    const { data } = await firstValueFrom(
+    return await responseErrorHandle(
+      '직원 호출 옵션 조회',
       this.httpService.get<EasycallSetupListResponse>(url, {
         params: {
-          store_id: this.configService.get('STORE_ID'),
+          store_id: storeId,
         },
-      }).pipe(
-        catchError((error: AxiosError) => {
-          console.error('[직원 호출 옵션 조회] Axios Error\n', error);
-          throw new Error('직원 호출 옵션 조회에 실패했습니다.');
-        }),
-      ),
+      }),
     );
-
-    if(data.result !== 'ok') {
-      console.error('[직원 호출 옵션 조회] Response Error\n', data);
-      throw new Error('직원 호출 옵션 조회에 실패했습니다.');
-    }
-
-    return data;
   }
 
   /**
    * 직원 호출
    */
   async callStaff(
+    storeId: StoreId,
     tableId: TableId,
     options: {
       /** 직원호출옵션 고유 아이디 */
@@ -56,10 +43,10 @@ export class EasycallSelversClientService {
       count: number,
     }[],
   ): Promise<true> {
-    const url = `${this.BASE_URL}/api/easyCall/v2/reqEasyCall.json`;
+    const url = this.genFullPath('/api/easyCall/v2/reqEasyCall.json');
 
     const params = new URLSearchParams();
-    params.append('store_id', this.configService.get('STORE_ID') || '');
+    params.append('store_id', storeId);
     params.append('store_table_id', tableId);
 
     options.forEach((option, index) => {
@@ -71,30 +58,14 @@ export class EasycallSelversClientService {
       params.append(`req_cnt[${index}]`, option.count.toString());
     });
 
-    const { data } = await firstValueFrom(
-      this.httpService.post<EasycallCallStaffResponse>(url, params, {
-        headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
-      })
-        .pipe(catchError((error: AxiosError) => {
-          console.error(
-            '[직원 호출] Axios Error\n',
-            `tableId: ${tableId}\n`,
-            `options: ${JSON.stringify(options)}\n`,
-            error,
-          );
-          throw new Error('직원 호출에 실패했습니다.');
-        })),
+    await responseErrorHandle(
+      '직원 호출',
+      this.httpService.post<EasycallCallStaffResponse>(url, params),
+      {
+        store_table_id: tableId,
+        options: JSON.stringify(options),
+      },
     );
-
-    if(data.result !== 'ok') {
-      console.error(
-        '[직원 호출] Response Error\n',
-        `tableId: ${tableId}\n`,
-        `options: ${JSON.stringify(options)}\n`,
-        data,
-      );
-      throw new Error('직원 호출에 실패했습니다.');
-    }
 
     return true;
   }

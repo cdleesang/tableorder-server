@@ -9,7 +9,7 @@ import { ConfigService } from './config.service';
     NestConfigModule.forRoot({
       validationSchema: Joi.object({
         STORE_ID: Joi.string().required(),
-        STORE_NAME: Joi.string().default('청담이상'),
+        STORE_MEMBER_ID: Joi.string().required(),
         ACCESS_TOKEN: Joi.string().required(),
       }),
     }),
