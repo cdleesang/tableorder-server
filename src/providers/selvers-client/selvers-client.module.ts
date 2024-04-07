@@ -2,8 +2,7 @@ import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '../../config/config.module';
 import { ConfigService } from '../../config/config.service';
-import { EasycallSelversClientService } from './easycall-selvers-client.service';
-import { WWWSelversClientService } from './www-selvers-client.service';
+import { SelversClientService } from './selvers-client.service';
 
 @Module({
   imports: [
@@ -18,12 +17,10 @@ import { WWWSelversClientService } from './www-selvers-client.service';
     }),
   ],
   providers: [
-    EasycallSelversClientService,
-    WWWSelversClientService,
+    SelversClientService,
   ],
   exports: [
-    EasycallSelversClientService,
-    WWWSelversClientService,
+    SelversClientService,
   ],
 })
 export class SelversClientModule {}

@@ -1,21 +1,21 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { EasycallSelversClientService } from '../../providers/selvers-client/easycall-selvers-client.service';
-import { PrismaService } from '../../providers/prisma/prisma.service';
-import { EntityNotFoundErrors } from '../../providers/prisma/errors/entity-not-found.error';
 import { ConfigService } from '../../config/config.service';
+import { EntityNotFoundErrors } from '../../providers/prisma/errors/entity-not-found.error';
+import { PrismaService } from '../../providers/prisma/prisma.service';
+import { SelversClientService } from '../../providers/selvers-client/selvers-client.service';
 import { GetCallStaffOptionsResponse } from './types/call-staff-response.type';
 
 @Injectable()
 export class CallStaffService {
   constructor(
     private readonly configService: ConfigService,
-    private readonly easyCallSelversClientService: EasycallSelversClientService,
     private readonly prismaService: PrismaService,
+    private readonly selversClientService: SelversClientService,
   ) {}
 
   async getCallOptions(): Promise<GetCallStaffOptionsResponse> {
     const storeId = this.configService.get('STORE_ID');
-    const data = await this.easyCallSelversClientService.getCallStaffOptions(storeId);
+    const data = await this.selversClientService.easycall.getCallStaffOptions(storeId);
 
     return data.items.map(item => ({
       id: parseInt(item.EasyCallSetup.id, 10),
@@ -38,7 +38,7 @@ export class CallStaffService {
         where: { id: tableId },
       });
       const storeId = this.configService.get('STORE_ID');
-      return this.easyCallSelversClientService.callStaff(
+      return this.selversClientService.easycall.callStaff(
         storeId,
         result!.storeTableId!,
         options.map(option => ({

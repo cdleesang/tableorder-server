@@ -3,6 +3,7 @@ import { ConfigModule } from './config/config.module';
 import { CallStaffModule } from './api/call-staff/call-staff.module';
 import { PrismaModule } from './providers/prisma/prisma.module';
 import { MenuModule } from './api/menu/menu.module';
+import { CartModule } from './api/cart/cart.module';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { MenuModule } from './api/menu/menu.module';
     ConfigModule,
     CallStaffModule,
     MenuModule,
+    CartModule,
   ],
 })
 export class AppModule {}

@@ -1,11 +1,6 @@
 import { tags } from 'typia';
 
 export interface CallStaffBody {
-  /**
-   * 테이블 고유 아이디
-   */
-  tableId: number;
-
   options: {
     /** 옵션 아이디 */
     id: number & tags.Type<'int32'>;

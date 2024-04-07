@@ -29,3 +29,9 @@ export type FoodId = NumericString;
 export type FoodOptionGroupId = NumericString;
 /** 세트메뉴 옵션 고유 아이디 */
 export type FoodOptionId = NumericString;
+
+/**
+ * Cart
+ */
+/** 장바구니 고유 아이디 */
+export type CartId = NumericString;

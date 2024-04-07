@@ -1,22 +1,6 @@
 import { BooleanString } from '../../../common/types/boolean-string.type';
 import { NumericString } from '../../../common/types/numeric-string.type';
-import { FoodId, FoodOptionGroupId, FoodOptionId, TableId } from './selvers-client.type';
-
-export interface TableLoginResponse {
-  result: 'ok' | string;
-  member: {
-    Member: {
-      id: NumericString,
-    },
-    StoreTable: {
-      seq: TableId,
-      id: NumericString,
-    },
-    Store: {
-      id: NumericString,
-    },
-  }
-}
+import { FoodId, FoodOptionGroupId, FoodOptionId } from './selvers-client.type';
 
 export interface MenuCategoryResponse {
   result: 'ok' | string;

@@ -1,20 +1,21 @@
-import { Injectable } from '@nestjs/common';
-import { WWWSelversClientService } from '../../providers/selvers-client/www-selvers-client.service';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '../../config/config.service';
+import { PageNotFoundError } from '../../providers/selvers-client/errors/page-not-found.error';
+import { SelversClientService } from '../../providers/selvers-client/selvers-client.service';
 import { GetMenuCategoriesResponse, GetMenuDetailById, GetPaginatedMenusByCategory } from './types/menu-response.type';
 
 @Injectable()
 export class MenuService {
   constructor(
     private readonly configService: ConfigService,
-    private readonly wwwSelversClientService: WWWSelversClientService,
+    private readonly selversClientService: SelversClientService,
   ) {}
 
   async getMenuCategories(): Promise<GetMenuCategoriesResponse> {
     const storeId = this.configService.get('STORE_ID');
     const storeMemberId = this.configService.get('STORE_MEMBER_ID');
 
-    const data = await this.wwwSelversClientService.getMenuCategory(storeId, storeMemberId);
+    const data = await this.selversClientService.food.getMenuCategory(storeId, storeMemberId);
     
     return data.data.StoreFoodDivision.map(division => {
       return {
@@ -33,7 +34,17 @@ export class MenuService {
   async getPaginatedMenusByCategory(page: number, categoryId: number, subCategoryId: number): Promise<GetPaginatedMenusByCategory> {
     const storeId = this.configService.get('STORE_ID');
 
-    const data = await this.wwwSelversClientService.getManyMenuByCategory(storeId, page, categoryId, subCategoryId);
+    const data = await (async () => {
+      try {
+        return await this.selversClientService.food.getManyMenuByCategory(storeId, page, categoryId, subCategoryId);
+      } catch(err) {
+        if(err instanceof PageNotFoundError) {
+          throw new NotFoundException('요청하신 페이지를 찾을 수 없습니다.');
+        }
+  
+        throw err;
+      }
+    })();
 
     return {
       totalPage: parseInt(data.total_page, 10),
@@ -50,7 +61,7 @@ export class MenuService {
   }
 
   async getMenuDetailById(menuId: number): Promise<GetMenuDetailById> {
-    const {food: {Food: data}} = await this.wwwSelversClientService.getMenuDetailById(menuId);
+    const {food: {Food: data}} = await this.selversClientService.food.getMenuDetailById(menuId);
 
     return {
       id: parseInt(data.id, 10),

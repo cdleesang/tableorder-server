@@ -40,6 +40,12 @@ export const NESTIA_CONFIG: INestiaConfig = {
        * `swagger.json` file would be renamed to it.
        */
       output: 'dist/swagger.json',
+      security: {
+        tid: {
+          type: 'apiKey',
+          name: 'tid',
+        }
+      },
       servers: [
         {
           url: 'http://localhost:3000',

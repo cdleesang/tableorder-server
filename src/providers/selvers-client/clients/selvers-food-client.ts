@@ -1,40 +1,10 @@
-import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
-import { StoreId } from './types/selvers-client.type';
-import { ManyMenuResponse, MenuCategoryResponse, MenuDetailResponse, TableLoginResponse } from './types/www-selvers-client.type';
-import { responseErrorHandle } from './utils/response-error-handle.util';
+import { PageNotFoundError } from '../errors/page-not-found.error';
+import { SelversWWWClient } from './selvers-www-client';
+import { ManyMenuResponse, MenuCategoryResponse, MenuDetailResponse } from '../types/selvers-food-response.type';
+import { StoreId } from '../types/selvers-client.type';
+import { responseErrorHandle } from '../utils/response-error-handle.util';
 
-@Injectable()
-export class WWWSelversClientService {
-  constructor(private readonly httpService: HttpService) {}
-
-  private genFullPath(url: string) {
-    return `http://www.selfood.co.kr${url}`;
-  }
-
-  /**
-   * 셀버스 멤버 로그인
-   * 
-   * @param userId 셀버스 멤버 아이디
-   * @param userPw 셀버스 멤버 비밀번호
-   */
-  async tableLogin(userId: string, userPw: string) {
-    const url = this.genFullPath('/login/table_index.json');
-
-    const params = new URLSearchParams();
-    params.append('user_id', userId);
-    params.append('user_pwd', userPw);
-
-    return await responseErrorHandle(
-      '테이블 로그인',
-      this.httpService.post<TableLoginResponse>(url, params),
-      {
-        user_id: userId,
-        user_pwd: userPw,
-      },
-    );
-  }
-
+export class SelversFoodClient extends SelversWWWClient {
   /**
    * 메뉴의 2단계 카테고리 조회
    */
@@ -74,6 +44,21 @@ export class WWWSelversClientService {
         store_food_division_2depth_id: category2Depth,
         page,
       },
+      {
+        axiosHandler: (err) => {
+          if(err.response?.status === 404) {
+            throw new PageNotFoundError();
+          }
+        },
+        responseHandler: (data, logger, error) => {
+          if(data.message === '등록된 DATA가 없습니다.') {
+            throw new PageNotFoundError();
+          }
+
+          logger();
+          throw error;
+        }
+      }
     );
 
     return {

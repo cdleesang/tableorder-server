@@ -1,11 +1,9 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
-import { EasycallCallStaffResponse, EasycallSetupListResponse } from './types/easycall-selver-client-response.type';
-import { EasycallOptionId, StoreId, TableId } from './types/selvers-client.type';
-import { responseErrorHandle } from './utils/response-error-handle.util';
+import { EasycallCallStaffResponse, EasycallSetupListResponse } from '../types/selvers-easycall-response.type';
+import { EasycallOptionId, StoreId, TableId } from '../types/selvers-client.type';
+import { responseErrorHandle } from '../utils/response-error-handle.util';
 
-@Injectable()
-export class EasycallSelversClientService {
+export class SelversEasycallClient {
   constructor(private readonly httpService: HttpService) {}
 
   private genFullPath(url: string) {

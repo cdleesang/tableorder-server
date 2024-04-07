@@ -1,14 +1,23 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { WWWSelversClientService } from '../selvers-client/www-selvers-client.service';
+import { SelversClientService } from '../selvers-client/selvers-client.service';
 import { ExtendedPrismaClient } from './utils/extended-client';
 
 @Injectable()
 export class PrismaService extends ExtendedPrismaClient implements OnModuleInit {
-  constructor(private readonly wwwSelversClientService: WWWSelversClientService) {
+  constructor(private readonly selversClientService: SelversClientService) {
     super({
       log: ['error'],
       errorFormat: 'pretty',
     });
+  }
+
+  async getMemberIdByTableId(tableId: number) {
+    const result = await this.table.findUnique({
+      select: {memberId: true},
+      where: {id: tableId},
+    });
+
+    return result!.memberId!
   }
 
   async onModuleInit() {
@@ -23,11 +32,11 @@ export class PrismaService extends ExtendedPrismaClient implements OnModuleInit 
 
     // NOTE: 서버 실행 시 셀버스의 로그인정보를 불러옴
     const settledResults = await Promise.allSettled(accounts.map(async account => {
-      return this.wwwSelversClientService.tableLogin(account.signInId, account.password);
+      return this.selversClientService.auth.tableLogin(account.signInId, account.password);
     }));
 
     const loginInfos = settledResults
-      .filter((result): result is PromiseFulfilledResult<Awaited<ReturnType<typeof this.wwwSelversClientService.tableLogin>>> => {
+      .filter((result): result is PromiseFulfilledResult<Awaited<ReturnType<typeof this.selversClientService.auth.tableLogin>>> => {
         if(result.status === 'rejected') {
           throw new Error('셀버스의 테이블 정보와 데이터베이스가 일치하지 않습니다.');
         }

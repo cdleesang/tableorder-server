@@ -1,8 +1,10 @@
 import { TypedBody, TypedRoute } from '@nestia/core';
-import { Controller } from '@nestjs/common';
+import { Controller, UseGuards } from '@nestjs/common';
 import { CallStaffService } from './call-staff.service';
 import { CallStaffBody } from './types/call-staff-request.type';
 import { GetCallStaffOptionsResponse } from './types/call-staff-response.type';
+import { TableIdGuard } from '../auth/table-id.guard';
+import { TableId } from '../auth/decorators/table-id.decorator';
 
 @Controller('call-staff')
 export class CallStaffController {
@@ -22,9 +24,11 @@ export class CallStaffController {
    * 직원 호출.
    * 
    * @tag 직원호출
+   * @security tid
    */
   @TypedRoute.Post()
-  callStaff(@TypedBody() body: CallStaffBody): Promise<true> {
-    return this.callStaffService.callStaff(body.tableId, body.options);
+  @UseGuards(TableIdGuard)
+  callStaff(@TableId() tableId: number, @TypedBody() body: CallStaffBody): Promise<true> {
+    return this.callStaffService.callStaff(tableId, body.options);
   }
 }
