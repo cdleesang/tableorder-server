@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 interface CartItem {
   /** 아이템의 아이디(주문 시 해당 아이디로 주문해야함) */
   id: number;
@@ -15,7 +17,7 @@ interface CartItem {
   menuTotalPrice: number;
 
   /** 메뉴 사진 */
-  imageUrl: string;
+  imageUrl: string & typia.tags.Format<'url'>;
   
   /** 메뉴 메인 옵션 */
   menuMainOption: {

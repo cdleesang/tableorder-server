@@ -4,6 +4,7 @@ import { CallStaffModule } from './api/call-staff/call-staff.module';
 import { PrismaModule } from './providers/prisma/prisma.module';
 import { MenuModule } from './api/menu/menu.module';
 import { CartModule } from './api/cart/cart.module';
+import { StoreModule } from './api/store/store.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { CartModule } from './api/cart/cart.module';
     CallStaffModule,
     MenuModule,
     CartModule,
+    StoreModule,
   ],
 })
 export class AppModule {}

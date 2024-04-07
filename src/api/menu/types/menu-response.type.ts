@@ -1,3 +1,5 @@
+import typia from 'typia';
+
 interface MenuCategory {
   /** 메뉴 카테고리 아이디 */
   id: number;
@@ -31,7 +33,7 @@ interface Menu {
   price: number;
 
   /** 메뉴 이미지 url */
-  imageUrl: string;
+  imageUrl: string & typia.tags.Format<'url'>;
 
   /** 메뉴 노출 여부 */
   isDisplay: boolean;
