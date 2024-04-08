@@ -1,6 +1,6 @@
 import { PageNotFoundError } from '../errors/page-not-found.error';
 import { SelversWWWClient } from './selvers-www-client';
-import { ManyMenuResponse, MenuCategoryResponse, MenuDetailResponse } from '../types/selvers-food-response.type';
+import { ManyMenuResponse, MenuCategoryResponse, MenuDetailResponse, NewStoreFoodsResponse } from '../types/selvers-food-response.type';
 import { StoreId } from '../types/selvers-client.type';
 import { responseErrorHandle } from '../utils/response-error-handle.util';
 
@@ -25,10 +25,68 @@ export class SelversFoodClient extends SelversWWWClient {
   /**
    * 카테고리로 메뉴 조회
    */
-  async getManyMenuByCategory(storeId: StoreId, page: number, category1Depth: number, category2Depth: number) {
-    const url = this.genFullPath('/api/spot/v2/getStoreProducts2Depth.json');
+  async getManyMenuByCategory(storeId: StoreId, page: number, category1Depth: number, category2Depth?: number) {
+    const data = category2Depth
+      ? await this.getManyMenuByCategory2Depth(storeId, page, category1Depth, category2Depth)
+      : await this.getManyMenuByCategory1Depth(storeId, page, category1Depth);
+
+    return {
+      ...data,
+      data: data.data.map(({Food: food}) => ({
+        Food: {
+          ...food,
+          image_uri: this.genFullPath(food.image_uri),
+        },
+      })),
+    };
+  }
+
+  private async getManyMenuByCategory1Depth(storeId: string, page: number, category1Depth: number): Promise<ManyMenuResponse> {
+    const url = this.genFullPath('/spot/new_store_foods.json');
 
     const data = await responseErrorHandle(
+      '메뉴 조회',
+      this.httpService.post<NewStoreFoodsResponse>(url, {
+        store_id: storeId,
+        division_id: category1Depth,
+        page,
+      }),
+      {
+        store_food_division_id: category1Depth,
+        page,
+      },
+      {
+        axiosHandler: (err) => {
+          if(err.response?.status === 404) {
+            throw new PageNotFoundError();
+          }
+        },
+        responseHandler: (data, logger, error) => {
+          if(data.list) return;
+
+          if(data.message === 'Not Found') {
+            throw new PageNotFoundError();
+          }
+
+          logger();
+          throw error;
+        }
+      }
+    );
+
+    return {
+      result: 'ok',
+      message: 'ok',
+      total_page: data.totalPage.toString(),
+      data: data.list,
+      page: data.page.toString(),
+    };
+  }
+
+  private async getManyMenuByCategory2Depth(storeId: StoreId, page: number, category1Depth: number, category2Depth: number): Promise<ManyMenuResponse> {
+    const url = this.genFullPath('/api/spot/v2/getStoreProducts2Depth.json');
+
+    return await responseErrorHandle(
       '메뉴 조회',
       this.httpService.get<ManyMenuResponse>(url, {
         params: {
@@ -51,6 +109,8 @@ export class SelversFoodClient extends SelversWWWClient {
           }
         },
         responseHandler: (data, logger, error) => {
+          if(data.data) return;
+
           if(data.message === '등록된 DATA가 없습니다.') {
             throw new PageNotFoundError();
           }
@@ -60,16 +120,6 @@ export class SelversFoodClient extends SelversWWWClient {
         }
       }
     );
-
-    return {
-      ...data,
-      data: data.data.map(({Food: food}) => ({
-        Food: {
-          ...food,
-          image_uri: this.genFullPath(food.image_uri),
-        },
-      })),
-    };
   }
 
   /**

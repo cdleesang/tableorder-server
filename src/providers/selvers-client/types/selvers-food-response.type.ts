@@ -17,25 +17,33 @@ export interface MenuCategoryResponse {
   }
 }
 
+interface Food {
+  id: NumericString,
+  food_name: string,
+  en_food_name: string,
+  price: NumericString,
+  /** full path가 아님, 변환 필요 */
+  image_uri: string,
+  /** 품절 여부 */
+  sold_out_yn: BooleanString,
+  /** 준비중 여부(준비중이 Y라면, 품절 여부도 Y로 표시됨) */
+  ready_yn: BooleanString,
+}
+
 export interface ManyMenuResponse {
   result: 'ok' | string;
   message: 'ok' | string;
   page: NumericString;
   total_page: NumericString;
-  data: {
-    Food: {
-      id: NumericString,
-      food_name: string,
-      en_food_name: string,
-      price: NumericString,
-      /** full path가 아님, 변환 필요 */
-      image_uri: string,
-      /** 품절 여부 */
-      sold_out_yn: BooleanString,
-      /** 준비중 여부(준비중이 Y라면, 품절 여부도 Y로 표시됨) */
-      ready_yn: BooleanString,
-    },
-  }[];
+  data: {Food: Food}[];
+}
+
+export interface NewStoreFoodsResponse {
+  name?: string;
+  message?: string;
+  page: number;
+  totalPage: number;
+  list: {Food: Food}[];
 }
 
 export interface MenuDetailResponse {

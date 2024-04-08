@@ -8,5 +8,5 @@ export interface GetPaginatedMenusByCategoryQuery {
   categoryId: number & typia.tags.Type<'int32'>;
 
   /** 중분류 카테고리 아이디 */
-  subCategoryId: number & typia.tags.Type<'int32'>;
+  subCategoryId?: number & typia.tags.Type<'int32'>;
 }

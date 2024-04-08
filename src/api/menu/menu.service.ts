@@ -31,7 +31,7 @@ export class MenuService {
     });
   }
 
-  async getPaginatedMenusByCategory(page: number, categoryId: number, subCategoryId: number): Promise<GetPaginatedMenusByCategory> {
+  async getPaginatedMenusByCategory(page: number, categoryId: number, subCategoryId?: number): Promise<GetPaginatedMenusByCategory> {
     const storeId = this.configService.get('STORE_ID');
 
     const data = await (async () => {
