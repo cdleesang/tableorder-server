@@ -50,8 +50,7 @@ interface CartItem {
   }[];
 }
 
-export interface GetPaginatedCartItems {
-  totalPage: number;
+export interface GetAllCartItems {
   cartItems: CartItem[];
 }
 

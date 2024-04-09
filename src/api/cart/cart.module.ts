@@ -13,5 +13,8 @@ import { SelversClientModule } from '../../providers/selvers-client/selvers-clie
   providers: [
     CartService,
   ],
+  exports: [
+    CartService,
+  ],
 })
 export class CartModule {}

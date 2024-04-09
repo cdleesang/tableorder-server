@@ -4,7 +4,7 @@ import { TableId } from '../auth/decorators/table-id.decorator';
 import { TableIdGuard } from '../auth/table-id.guard';
 import { CartService } from './cart.service';
 import { AddCartItemBody } from './types/cart-request.type';
-import { GetPaginatedCartItems } from './types/cart-response.type';
+import { GetAllCartItems } from './types/cart-response.type';
 
 @Controller('cart')
 export class CartController {
@@ -18,7 +18,7 @@ export class CartController {
    */
   @TypedRoute.Get()
   @UseGuards(TableIdGuard)
-  async getAllCartItems(@TableId() tableId: number): Promise<GetPaginatedCartItems> {
+  async getAllCartItems(@TableId() tableId: number): Promise<GetAllCartItems> {
     return this.cartService.getAllCartItems(tableId);
   }
 

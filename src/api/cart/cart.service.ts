@@ -3,7 +3,7 @@ import { ConfigService } from '../../config/config.service';
 import { PrismaService } from '../../providers/prisma/prisma.service';
 import { PageNotFoundError } from '../../providers/selvers-client/errors/page-not-found.error';
 import { SelversClientService } from '../../providers/selvers-client/selvers-client.service';
-import { GetPaginatedCartItems } from './types/cart-response.type';
+import { GetAllCartItems } from './types/cart-response.type';
 
 @Injectable()
 export class CartService {
@@ -13,13 +13,12 @@ export class CartService {
     private readonly selversClientService: SelversClientService,
   ) {}
 
-  async getAllCartItems(tableId: number): Promise<GetPaginatedCartItems> {
+  async getAllCartItems(tableId: number): Promise<GetAllCartItems> {
     const memberId = await this.prismaService.getMemberIdByTableId(tableId);
 
     const data = await this.selversClientService.cart.getManyCartItem(memberId, 1);
 
     return {
-      totalPage: data.totalPage,
       cartItems: data.list.map(({Cart: item}) => ({
         id: parseInt(item.id, 10),
         menuId: parseInt(item.Food.id, 10),
