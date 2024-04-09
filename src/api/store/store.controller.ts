@@ -1,6 +1,6 @@
+import { TypedRoute } from '@nestia/core';
 import { Controller } from '@nestjs/common';
 import { StoreService } from './store.service';
-import { TypedRoute } from '@nestia/core';
 import { GetAllSlideImagesResponse } from './types/store-response.type';
 
 @Controller('store')

@@ -3,11 +3,13 @@ import { SelversClientModule } from '../../providers/selvers-client/selvers-clie
 import { StoreController } from './store.controller';
 import { StoreService } from './store.service';
 import { ScheduleModule } from '@nestjs/schedule';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
     SelversClientModule,
     ScheduleModule.forRoot(),
+    NotificationModule,
   ],
   controllers: [
     StoreController,

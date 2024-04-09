@@ -14,6 +14,7 @@ import { StoreModule } from './api/store/store.module';
     MenuModule,
     CartModule,
     StoreModule,
+    NotificationModule,
   ],
 })
 export class AppModule {}
