@@ -1,7 +1,6 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { ConfigService } from '../../config/config.service';
 import { PrismaService } from '../../providers/prisma/prisma.service';
-import { PageNotFoundError } from '../../providers/selvers-client/errors/page-not-found.error';
 import { SelversClientService } from '../../providers/selvers-client/selvers-client.service';
 import { GetAllCartItems } from './types/cart-response.type';
 
@@ -23,21 +22,28 @@ export class CartService {
         id: parseInt(item.id, 10),
         menuId: parseInt(item.Food.id, 10),
         menuName: item.Food.food_name,
-        menuAmount: parseInt(item.amount, 10),
-        menuTotalPrice: parseInt(item.price, 10),
+        menuAmount: parseInt(item.amount, 10) || 1,
+        menuTotalPrice: parseInt(item.price, 10) || 0,
         imageUrl: item.Food.image_uri,
         menuMainOption: {
           id: parseInt(item.CartFood.food_price_opt_id, 10),
-          name: item.FoodPriceOpt.opt_name,
-          price: parseInt(item.FoodPriceOpt.opt_price, 10),
+          name: item.FoodPriceOpt.opt_name || '',
+          price: parseInt(item.FoodPriceOpt.opt_price, 10) || 0,
         },
-        menuSubOptions: item.FoodOpt.map(option => ({
-          groupId: parseInt(option.id, 10),
-          groupName: option.food_opt_name,
-          optionId: parseInt(option.FoodOptItem.id, 10),
-          optionName: option.FoodOptItem.food_opt_item_name,
-          optionPrice: parseInt(option.FoodOptItem.food_opt_item_price, 10),
-        })),
+        menuSubOptions: item.FoodOpt.reduce((prev, next) => {
+          return Array.isArray(next)
+            ? prev
+            : [
+              ...prev,
+              {
+                groupId: parseInt(next.id, 10),
+                groupName: next.food_opt_name,
+                optionId: parseInt(next.FoodOptItem.id, 10),
+                optionName: next.FoodOptItem.food_opt_item_name,
+                optionPrice: parseInt(next.FoodOptItem.food_opt_item_price, 10),
+              },
+            ];
+        }, []),
       })),
     };
   }
@@ -63,7 +69,7 @@ export class CartService {
     if(count >= 10) {
       throw new ConflictException('장바구니에 더 이상 상품을 추가할 수 없습니다.');
     }
-
+    
     return this.selversClientService.cart.addItem(
       storeId,
       memberId,

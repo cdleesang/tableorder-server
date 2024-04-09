@@ -9,7 +9,7 @@ export class NotificationController {
   /**
    * 알림 SSE.
    * 
-   * @tags 알림
+   * @tag 알림
    */
   @Sse('sse')
   sse(): Observable<MessageEvent> {

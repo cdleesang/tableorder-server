@@ -5,6 +5,8 @@ import { PrismaModule } from './providers/prisma/prisma.module';
 import { MenuModule } from './api/menu/menu.module';
 import { CartModule } from './api/cart/cart.module';
 import { StoreModule } from './api/store/store.module';
+import { OrderModule } from './api/order/order.module';
+import { NotificationModule } from './api/notification/notification.module';
 
 @Module({
   imports: [
@@ -14,6 +16,7 @@ import { StoreModule } from './api/store/store.module';
     MenuModule,
     CartModule,
     StoreModule,
+    OrderModule,
     NotificationModule,
   ],
 })

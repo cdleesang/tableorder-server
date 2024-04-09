@@ -27,6 +27,13 @@ export const NESTIA_CONFIG: INestiaConfig = {
   // },
 
   /**
+   * Output directory that SDK would be placed in.
+   *
+   * If not configured, you can't build the SDK library.
+   */
+  output: './sdk',
+  clone: true,
+  /**
    * Building `swagger.json` is also possible.
    *
    * If not specified, you can't build the `swagger.json`.
@@ -56,13 +63,6 @@ export const NESTIA_CONFIG: INestiaConfig = {
   },
 
   /**
-   * Output directory that SDK would be placed in.
-   *
-   * If not configured, you can't build the SDK library.
-   */
-  output: './sdk',
-
-  /**
    * Target directory that SDK distribution files would be placed in.
    *
    * If you configure this property and runs `npx nestia sdk` command,
@@ -72,7 +72,7 @@ export const NESTIA_CONFIG: INestiaConfig = {
    * and runs `npm publish` command, then you can share SDK library with
    * other client (frontend) developers.
    */
-  // distribute: 'packages/api',
+  distribute: 'sdk/distribute',
 
   /**
    * Whether to use propagation mode or not.

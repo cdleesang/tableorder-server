@@ -5,6 +5,7 @@ import { SelversCartClient } from './clients/selvers-cart-client';
 import { SelversEasycallClient } from './clients/selvers-easycall-client';
 import { SelversFoodClient } from './clients/selvers-food-client';
 import { SelversStoreClient } from './clients/selvers-store-client';
+import { SelversOrderClient } from './clients/selvers-order-client';
 
 @Injectable()
 export class SelversClientService {
@@ -13,6 +14,7 @@ export class SelversClientService {
   public easycall: SelversEasycallClient;
   public food: SelversFoodClient;
   public store: SelversStoreClient;
+  public order: SelversOrderClient;
 
   constructor(
     readonly httpService: HttpService,
@@ -22,5 +24,6 @@ export class SelversClientService {
     this.easycall = new SelversEasycallClient(httpService);
     this.food = new SelversFoodClient(httpService);
     this.store = new SelversStoreClient(httpService);
+    this.order = new SelversOrderClient(httpService);
   }
 }
