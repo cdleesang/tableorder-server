@@ -2,10 +2,31 @@ import { Injectable } from '@nestjs/common';
 import { PageNotFoundError } from '../errors/page-not-found.error';
 import { responseErrorHandle } from '../utils/response-error-handle.util';
 import { SelversWWWClient } from './selvers-www-client';
-import { BaseCartResponse, CartIndexResponse } from '../types/selvers-cart-response.type';
+import { BaseCartResponse, CartIndexResponse, CartItemCountResponse } from '../types/selvers-cart-response.type';
 
 @Injectable()
 export class SelversCartClient extends SelversWWWClient {
+  /**
+   * 장바구니 아이템 개수 조회
+   */
+  async getCartItemCount(memberId: string) {
+    const url = this.genFullPath('/cart/total_count.json');
+
+    const params = new URLSearchParams();
+    params.append('member_id', memberId);
+
+    return await responseErrorHandle(
+      '장바구니 개수 조회',
+      this.httpService.post<CartItemCountResponse>(url, params),
+      {memberId},
+      {
+        responseHandler() {
+          return;
+        },
+      }
+    )
+  }
+
   /**
    * 장바구니 조회
    */

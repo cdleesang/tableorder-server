@@ -1,6 +1,10 @@
 import { NumericString } from '../../../common/types/numeric-string.type';
 import { CartId, FoodId, FoodOptionGroupId, FoodOptionId, StoreId } from './selvers-client.type';
 
+export interface CartItemCountResponse {
+  count: number;
+}
+
 export interface CartIndexResponse {
   message?: string;
   page: NumericString;

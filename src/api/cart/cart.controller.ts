@@ -1,25 +1,25 @@
-import { Controller, UseGuards } from '@nestjs/common';
-import { CartService } from './cart.service';
-import { TypedBody, TypedParam, TypedQuery, TypedRoute } from '@nestia/core';
-import { GetPaginatedCartItems } from './types/cart-response.type';
-import { AddCartItemBody, GetPaginatedCartItemsQuery } from './types/cart-request.type';
-import { TableIdGuard } from '../auth/table-id.guard';
+import { TypedBody, TypedException, TypedParam, TypedRoute } from '@nestia/core';
+import { ConflictException, Controller, UseGuards } from '@nestjs/common';
 import { TableId } from '../auth/decorators/table-id.decorator';
+import { TableIdGuard } from '../auth/table-id.guard';
+import { CartService } from './cart.service';
+import { AddCartItemBody } from './types/cart-request.type';
+import { GetPaginatedCartItems } from './types/cart-response.type';
 
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
   /**
-   * 페이징된 장바구니 조회.
+   * 장바구니 조회.
    * 
    * @tag 장바구니
    * @security tid
    */
   @TypedRoute.Get()
   @UseGuards(TableIdGuard)
-  async getPaginatedCartItems(@TableId() tableId: number, @TypedQuery() query: GetPaginatedCartItemsQuery): Promise<GetPaginatedCartItems> {
-    return this.cartService.getPaginatedCartItems(tableId, query.page);
+  async getAllCartItems(@TableId() tableId: number): Promise<GetPaginatedCartItems> {
+    return this.cartService.getAllCartItems(tableId);
   }
 
   /**
@@ -29,6 +29,7 @@ export class CartController {
    * @security tid
    */
   @TypedRoute.Post()
+  @TypedException<ConflictException>(409, '상품을 더이상 추가할 수 없음')
   @UseGuards(TableIdGuard)
   async addItem(@TableId() tableId: number, @TypedBody() body: AddCartItemBody): Promise<true> {
     return this.cartService.addItem(tableId, {

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '../../config/config.service';
 import { PrismaService } from '../../providers/prisma/prisma.service';
 import { PageNotFoundError } from '../../providers/selvers-client/errors/page-not-found.error';
@@ -13,20 +13,10 @@ export class CartService {
     private readonly selversClientService: SelversClientService,
   ) {}
 
-  async getPaginatedCartItems(tableId: number, page: number): Promise<GetPaginatedCartItems> {
+  async getAllCartItems(tableId: number): Promise<GetPaginatedCartItems> {
     const memberId = await this.prismaService.getMemberIdByTableId(tableId);
 
-    const data = await (async () => {
-      try {
-        return await this.selversClientService.cart.getManyCartItem(memberId, page);
-      } catch(err) {
-        if(err instanceof PageNotFoundError) {
-          throw new NotFoundException('요청하신 페이지를 찾을 수 없습니다.');
-        }
-
-        throw err;
-      }
-    })();
+    const data = await this.selversClientService.cart.getManyCartItem(memberId, 1);
 
     return {
       totalPage: data.totalPage,
@@ -68,6 +58,12 @@ export class CartService {
   ): Promise<true> {
     const storeId = this.configService.get('STORE_ID');
     const memberId = await this.prismaService.getMemberIdByTableId(tableId);
+
+    const { count } = await this.selversClientService.cart.getCartItemCount(memberId);
+
+    if(count >= 10) {
+      throw new ConflictException('장바구니에 더 이상 상품을 추가할 수 없습니다.');
+    }
 
     return this.selversClientService.cart.addItem(
       storeId,
