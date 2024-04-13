@@ -32,14 +32,14 @@ export class SelversOrderClient extends SelversWWWClient {
    */
   private filterOrderHistoryAfterCreatedAt(orderHistory: OrderHistoryResponse, createdAt: Date): OrderHistoryResponse {
     const search = (left: number, right: number) => {
-        if (left > right) return left;
+      if(left > right) return left;
 
-        const mid = Math.floor((left + right) / 2);
-        const currentCreatedAt = this.selversDateTimeToJsDate(orderHistory.list[mid].Order.created);
+      const mid = Math.floor((left + right) / 2);
+      const currentCreatedAt = this.selversDateTimeToJsDate(orderHistory.list[mid].Order.created);
         
-        return currentCreatedAt.getTime() > createdAt.getTime()
-          ? search(left, mid-1)
-          : search(mid+1, right);
+      return currentCreatedAt.getTime() > createdAt.getTime()
+        ? search(left, mid-1)
+        : search(mid+1, right);
     };
 
     const index = search(0, orderHistory.list.length - 1);

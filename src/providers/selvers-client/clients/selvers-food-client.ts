@@ -56,22 +56,22 @@ export class SelversFoodClient extends SelversWWWClient {
         page,
       },
       {
-        axiosHandler: (err) => {
+        axiosHandler: err => {
           if(err.response?.status === 404) {
             throw new PageNotFoundError();
           }
         },
-        responseHandler: (data, logger, error) => {
-          if(data.list) return;
+        responseHandler: (res, logger, error) => {
+          if(res.list) return;
 
-          if(data.message === 'Not Found') {
+          if(res.message === 'Not Found') {
             throw new PageNotFoundError();
           }
 
           logger();
           throw error;
-        }
-      }
+        },
+      },
     );
 
     return {
@@ -103,7 +103,7 @@ export class SelversFoodClient extends SelversWWWClient {
         page,
       },
       {
-        axiosHandler: (err) => {
+        axiosHandler: err => {
           if(err.response?.status === 404) {
             throw new PageNotFoundError();
           }
@@ -117,8 +117,8 @@ export class SelversFoodClient extends SelversWWWClient {
 
           logger();
           throw error;
-        }
-      }
+        },
+      },
     );
   }
 

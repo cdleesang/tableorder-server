@@ -28,7 +28,7 @@ export class StoreService implements OnModuleInit {
     const prevSlideImageUrls = this.slideImageUrls;
 
     this.slideImageUrls = data.data
-      .sort((a, b) => parseInt(a.ranking, 10) > parseInt(b.ranking, 10) ? 1 : -1)
+      .sort((a, b) => (parseInt(a.ranking, 10) > parseInt(b.ranking, 10) ? 1 : -1))
       .map(({s3_url}) => s3_url);
 
     const isSlideImageChanged = prevSlideImageUrls.length !== this.slideImageUrls.length

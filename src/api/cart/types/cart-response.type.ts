@@ -53,4 +53,3 @@ interface CartItem {
 export interface GetAllCartItems {
   cartItems: CartItem[];
 }
-

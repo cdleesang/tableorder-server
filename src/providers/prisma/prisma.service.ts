@@ -17,7 +17,7 @@ export class PrismaService extends ExtendedPrismaClient implements OnModuleInit 
       where: {id: tableId},
     });
 
-    return result!.memberId!
+    return result!.memberId!;
   }
 
   async onModuleInit() {

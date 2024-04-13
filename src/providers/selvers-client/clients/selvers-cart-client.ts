@@ -21,10 +21,10 @@ export class SelversCartClient extends SelversWWWClient {
       {memberId},
       {
         responseHandler() {
-          return;
+          
         },
-      }
-    )
+      },
+    );
   }
 
   /**
@@ -42,13 +42,13 @@ export class SelversCartClient extends SelversWWWClient {
       this.httpService.post<CartIndexResponse>(url, params),
       {memberId, page},
       {
-        axiosHandler: (err) => {
+        axiosHandler: err => {
           if(err.response?.status === 404) {
             throw new PageNotFoundError();
           }
         },
-        responseHandler: (data, logger, error) => {
-          if(data.list) return;
+        responseHandler: (res, logger, error) => {
+          if(res.list) return;
 
           logger();
           throw error;
@@ -85,7 +85,7 @@ export class SelversCartClient extends SelversWWWClient {
         id: string,
         itemId: string,
       }[],
-    }
+    },
   ): Promise<true> {
     const url = this.genFullPath('/cart/add.json');
 

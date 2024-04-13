@@ -13,10 +13,9 @@ export async function responseErrorHandle<T>(
   additionalLogs: {[key: string]: any} = {},
   customHandlers?: {
     axiosHandler?: (err: AxiosError) => void,
-    responseHandler?: (data: T, responseErrorLogger: () => void, responseError: ResponseError) => void | Promise<void>
-  }
+    responseHandler?: (res: T, responseErrorLogger: () => void, responseError: ResponseError) => void | Promise<void>
+  },
 ): Promise<T> {
-  
   const { data } = await firstValueFrom(
     request.pipe(catchError((err: AxiosError) => {
       const axiosErrorLogger = () => console.error(
@@ -42,12 +41,9 @@ export async function responseErrorHandle<T>(
 
   if(customHandlers && customHandlers.responseHandler) {
     await customHandlers.responseHandler(data, responseErrorLogger, new ResponseError(apiName));
-  } else {
-    // 기본 에러 핸들러
-    if((data as T & {result: 'ok' | string}).result !== 'ok') {
-      responseErrorLogger();
-      throw new ResponseError(apiName);
-    }
+  } else if((data as T & {result: 'ok' | string}).result !== 'ok') {
+    responseErrorLogger();
+    throw new ResponseError(apiName);
   }
 
   return data;

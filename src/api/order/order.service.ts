@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import typia from 'typia';
 import { ConfigService } from '../../config/config.service';
 import { SelversClientService } from '../../providers/selvers-client/selvers-client.service';
 import { PrismaService } from '../../providers/prisma/prisma.service';
-import typia from 'typia';
 import { CartService } from '../cart/cart.service';
 import { OrderImmediatelyBody } from './types/order-request.type';
 
@@ -66,7 +66,7 @@ export class OrderService {
       storeId,
       result!.storeTableId!,
       result!.memberId!,
-      cartItems.reduce((acc, item) => acc+=item.price, 0).toString(),
+      cartItems.reduce((acc, item) => acc+item.price, 0).toString(),
       cartItems.map(item => ({
         id: item.id.toString(),
         amount: item.amount.toString(),
