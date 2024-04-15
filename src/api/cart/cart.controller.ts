@@ -27,11 +27,12 @@ export class CartController {
    * 
    * @tag 장바구니
    * @security tid
+   * @returns {number} 추가된 아이템 아이디
    */
   @TypedRoute.Post()
   @TypedException<ConflictException>(409, '상품을 더이상 추가할 수 없음')
   @UseGuards(TableIdGuard)
-  async addItem(@TableId() tableId: number, @TypedBody() body: AddCartItemBody): Promise<true> {
+  async addItem(@TableId() tableId: number, @TypedBody() body: AddCartItemBody): Promise<number> {
     return this.cartService.addItem(tableId, {
       ...body,
       id: body.menuId,

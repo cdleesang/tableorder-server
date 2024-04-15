@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '../../config/config.service';
 import { PrismaService } from '../../providers/prisma/prisma.service';
 import { SelversClientService } from '../../providers/selvers-client/selvers-client.service';
@@ -60,7 +60,7 @@ export class CartService {
         optionId: number,
       }[],
     },
-  ): Promise<true> {
+  ): Promise<number> {
     const storeId = this.configService.get('STORE_ID');
     const memberId = await this.prismaService.getMemberIdByTableId(tableId);
 
@@ -70,7 +70,7 @@ export class CartService {
       throw new ConflictException('장바구니에 더 이상 상품을 추가할 수 없습니다.');
     }
     
-    return this.selversClientService.cart.addItem(
+    await this.selversClientService.cart.addItem(
       storeId,
       memberId,
       {
@@ -84,6 +84,28 @@ export class CartService {
         })),
       },
     );
+
+    const { cartItems } = await this.getAllCartItems(tableId);
+
+    const addedItem = cartItems.findLast(item => {
+      return item.menuId === menu.id
+        && item.menuAmount === menu.amount
+        && item.menuTotalPrice === menu.totalPrice
+        && item.menuMainOption.id === menu.mainOptionId
+        && item.menuSubOptions.length === menu.subOptions.length
+        && item.menuSubOptions.every(
+          subOption => menu.subOptions.find(
+            option => (option.optionGroupId === subOption.groupId)
+              && (option.optionId === subOption.optionId),
+          ),
+        );
+    });
+
+    if(!addedItem) {
+      throw new InternalServerErrorException('상품 추가에 실패했습니다.');
+    }
+
+    return addedItem.id;
   }
 
   async deleteItemById(tableId: number, itemId: number): Promise<true> {
