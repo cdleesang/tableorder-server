@@ -5,6 +5,7 @@ import { SelversClientService } from '../../providers/selvers-client/selvers-cli
 import { PrismaService } from '../../providers/prisma/prisma.service';
 import { CartService } from '../cart/cart.service';
 import { OrderImmediatelyBody } from './types/order-request.type';
+import { GetAllOrderHistoriesResponse } from './types/order-response.type';
 
 @Injectable()
 export class OrderService {
@@ -15,14 +16,35 @@ export class OrderService {
     private readonly cartService: CartService,
   ) {}
 
-  async getAllOrderHistories(tableId: number, enteredAt: string & typia.tags.Format<'date-time'>) {
+  async getAllOrderHistories(tableId: number, enteredAt: string & typia.tags.Format<'date-time'>): Promise<GetAllOrderHistoriesResponse> {
     const storeId = this.configService.get('STORE_ID');
     const result = await this.prismaService.table.findUnique({
       select: {storeTableId: true},
       where: {id: tableId},
     });
 
-    return this.selversClientService.order.getOrderHistory(storeId, result!.storeTableId!, new Date(enteredAt));
+    const orderHistories = await this.selversClientService.order.getOrderHistory(storeId, result!.storeTableId!, new Date(enteredAt));
+
+    return {
+      orderHistories: orderHistories.list.map(order => ({
+        id: parseInt(order.Order.id, 10),
+        totalPrice: parseInt(order.Order.total_price, 10),
+        createdAt: new Date(`${order.Order.created}Z+09:00`),
+        orderSeq: parseInt(order.Order.order_seq, 10),
+        menus: order.Order.OrderFoods.map(({OrderFood, OrderFoodOpt}) => ({
+          id: parseInt(OrderFood.id, 10),
+          totalPrice: parseInt(OrderFood.price, 10),
+          amount: parseInt(OrderFood.amount, 10),
+          name: OrderFood.food_name,
+          mainOptionName: OrderFood.food_price_opt_name,
+          subOptionGroups: OrderFoodOpt.map(opt => ({
+            groupName: opt.food_opt_name,
+            optionName: opt.food_opt_item_name,
+            optionPrice: parseInt(opt.food_opt_item_price, 10),
+          })),
+        })),
+      })),
+    };
   }
 
   async orderImmediately(tableId: number, body: OrderImmediatelyBody): Promise<true> {

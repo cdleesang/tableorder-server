@@ -4,6 +4,7 @@ import { TableId } from '../auth/decorators/table-id.decorator';
 import { TableIdGuard } from '../auth/table-id.guard';
 import { OrderService } from './order.service';
 import { GetAllOrderHistoriesQuery, OrderCartBody, OrderImmediatelyBody } from './types/order-request.type';
+import { GetAllOrderHistoriesResponse } from './types/order-response.type';
 
 @Controller('order')
 export class OrderController {
@@ -17,7 +18,7 @@ export class OrderController {
    */
   @TypedRoute.Get()
   @UseGuards(TableIdGuard)
-  async getAllOrderHistories(@TableId() tableId: number, @TypedQuery() query: GetAllOrderHistoriesQuery) {
+  async getAllOrderHistories(@TableId() tableId: number, @TypedQuery() query: GetAllOrderHistoriesQuery): Promise<GetAllOrderHistoriesResponse> {
     return this.orderService.getAllOrderHistories(tableId, query.enteredAt);
   }
 
