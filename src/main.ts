@@ -11,6 +11,10 @@ async function bootstrap() {
   });
   const PORT = 3000;
 
+  if(process.env.NODE_ENV === 'development') {
+    app.enableCors();
+  }
+
   const swaggerPath = join(process.cwd(), 'dist', 'swagger.json');
   if(existsSync(swaggerPath)) {
     const document = JSON.parse(
