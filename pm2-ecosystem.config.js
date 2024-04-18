@@ -6,5 +6,6 @@ module.exports = {
     watch: true,
     ignore_watch: ['node_modules', 'prisma', '.git'],
     restart_delay: 1000,
+    vizion: false,
   }],
 };
