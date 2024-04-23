@@ -1,10 +1,10 @@
-import { TypedBody, TypedQuery, TypedRoute } from '@nestia/core';
-import { Controller, UseGuards } from '@nestjs/common';
+import { TypedBody, TypedException, TypedParam, TypedQuery, TypedRoute } from '@nestia/core';
+import { Controller, ForbiddenException, UseGuards } from '@nestjs/common';
 import { TableId } from '../auth/decorators/table-id.decorator';
 import { TableIdGuard } from '../auth/table-id.guard';
 import { OrderService } from './order.service';
 import { GetAllOrderHistoriesQuery, OrderCartBody, OrderImmediatelyBody } from './types/order-request.type';
-import { GetAllOrderHistoriesResponse } from './types/order-response.type';
+import { GetAllOrderHistoriesResponse, GetOrderHistoriesByTableId } from './types/order-response.type';
 
 @Controller('order')
 export class OrderController {
@@ -15,11 +15,27 @@ export class OrderController {
    * 
    * @tag 주문
    * @security tid
+   * @deprecated
    */
   @TypedRoute.Get()
   @UseGuards(TableIdGuard)
   async getAllOrderHistories(@TableId() tableId: number, @TypedQuery() query: GetAllOrderHistoriesQuery): Promise<GetAllOrderHistoriesResponse> {
     return this.orderService.getAllOrderHistories(tableId, query.enteredAt);
+  }
+
+  // TODO: 모든 테이블 주문내역 조회 추가(관리자 전용)
+
+  /**
+   * 테이블 번호로 주문내역 조회.
+   * 
+   * @tag 주문
+   * @security tid
+   */
+  @TypedRoute.Get(':tableId')
+  @TypedException<ForbiddenException>(403, '요청한 테이블 번호와 로그인한 테이블 번호가 일치하지 않음')
+  @UseGuards(TableIdGuard)
+  async getOrderHistoriesByTableId(@TableId() loggedInTableId: number, @TypedParam('tableId') tableId: number): Promise<GetOrderHistoriesByTableId> {
+    return this.orderService.getOrderHistoriesByTableId(loggedInTableId, tableId);
   }
 
   /**

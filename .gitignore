@@ -49,4 +49,6 @@ lerna-debug.log*
 
 *.env
 
+.npmrc
+
 sdk
