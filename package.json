@@ -39,6 +39,7 @@
     "@nestjs/schedule": "^4.0.1",
     "@nestjs/serve-static": "^4.0.2",
     "@nestjs/swagger": "^7.3.0",
+    "@oz-k/node-firebird-cp949": "1.1.10",
     "@prisma/client": "5.9.1",
     "axios": "^1.6.8",
     "joi": "^17.12.3",

@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import typia from 'typia';
 import { ConfigService } from '../../config/config.service';
 import { SelversClientService } from '../../providers/selvers-client/selvers-client.service';
 import { PrismaService } from '../../providers/prisma/prisma.service';
 import { CartService } from '../cart/cart.service';
 import { OrderImmediatelyBody } from './types/order-request.type';
-import { GetAllOrderHistoriesResponse } from './types/order-response.type';
+import { GetAllOrderHistoriesResponse, GetOrderHistoriesByTableId } from './types/order-response.type';
+import { PosHTableRepository } from '../../providers/pos-repository/pos-h-table.repository';
 
 @Injectable()
 export class OrderService {
@@ -14,6 +15,7 @@ export class OrderService {
     private readonly prismaService: PrismaService,
     private readonly selversClientService: SelversClientService,
     private readonly cartService: CartService,
+    private readonly posHTableRepository: PosHTableRepository,
   ) {}
 
   async getAllOrderHistories(tableId: number, enteredAt: string & typia.tags.Format<'date-time'>): Promise<GetAllOrderHistoriesResponse> {
@@ -44,6 +46,27 @@ export class OrderService {
           })),
         })),
       })),
+    };
+  }
+
+  async getOrderHistoriesByTableId(loggedInTableId: number, tableId: number): Promise<GetOrderHistoriesByTableId> {
+    if(loggedInTableId !== tableId) {
+      throw new ForbiddenException('이 테이블의 주문내역을 조회할 권한이 없습니다.');
+    }
+
+    return {
+      orderHistories: await this.posHTableRepository.findMany({
+        select: {
+          stockName: true,
+          amount: true,
+          quantity: true,
+          orderTime: true,
+        },
+        where: {tableNo: tableId},
+        orderBy: {
+          orderTime: 'desc',
+        },
+      }),
     };
   }
 
