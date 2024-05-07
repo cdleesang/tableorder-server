@@ -6,7 +6,7 @@ call git pull
 
 call yarn
 
-call yarn prisma:generate:prod
+call yarn prisma:generate
 
 call yarn build
 
