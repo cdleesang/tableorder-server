@@ -10,4 +10,6 @@ call yarn prisma:generate:prod
 
 call yarn build
 
+call npx pm2 reload "청담이상 테이블오더"
+
 pause
