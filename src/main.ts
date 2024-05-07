@@ -13,17 +13,18 @@ async function bootstrap() {
 
   if(process.env.NODE_ENV === 'development') {
     app.enableCors();
-  }
 
-  const swaggerPath = join(process.cwd(), 'dist', 'swagger.json');
-  if(existsSync(swaggerPath)) {
-    const document = JSON.parse(
-      readFileSync(swaggerPath).toString('utf-8'),
-    );
-    SwaggerModule.setup('docs', app, document);
+    const swaggerPath = join(process.cwd(), 'dist', 'swagger.json');
+    if(existsSync(swaggerPath)) {
+      const document = JSON.parse(
+        readFileSync(swaggerPath).toString('utf-8'),
+      );
+      SwaggerModule.setup('docs', app, document);
+    }
   }
 
   await app.listen(PORT, () => {
+    process.send?.('ready');
     Logger.verbose(`테이블 오더 동작 중... 포트: ${PORT}`, 'Bootstrap');
   });
 }
