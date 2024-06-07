@@ -2,7 +2,7 @@
 
 call cd %~dp0\..
 
-call npx -y pm2 delete all
+call npx -y pm2 delete "CDLeesang_Api"
 
 call yarn start:prod
 
