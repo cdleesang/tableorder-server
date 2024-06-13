@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { SelversClientModule } from '../../providers/selvers-client/selvers-client.module';
+import { PosRepositoryModule } from 'src/common/modules/pos-repository/pos-repository.module';
+import { SelversClientModule } from 'src/common/modules/selvers-client/selvers-client.module';
+import { CartModule } from '../cart/cart.module';
 import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
-import { CartModule } from '../cart/cart.module';
-import { PosRepositoryModule } from '../../providers/pos-repository/pos-repository.module';
 
 @Module({
   imports: [

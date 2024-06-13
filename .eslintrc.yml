@@ -1,107 +1,106 @@
-parser: "@typescript-eslint/parser"
+parser: '@typescript-eslint/parser'
 
 parserOptions:
-  project: [tsconfig.json]
+  project:
+    - tsconfig.json
   sourceType: module
 
-plugins: ["@typescript-eslint/eslint-plugin"]
+plugins:
+  - '@typescript-eslint/eslint-plugin'
 
 extends:
-  - "plugin:@typescript-eslint/recommended"
-  - "airbnb-base"
-  - "airbnb-typescript/base"
+  - plugin:@typescript-eslint/recommended
+  - airbnb-base
+  - airbnb-typescript/base
 
 root: true
 
-env: 
+env:
   node: true
   jest: true
 
 rules:
-  "@typescript-eslint/interface-name-prefix": off
-  "@typescript-eslint/explicit-function-return-type": off
-  "@typescript-eslint/explicit-module-boundary-types": off
-  "@typescript-eslint/no-explicit-any": off
-  "import/prefer-default-export": off
-  "@typescript-eslint/indent":
+  '@typescript-eslint/interface-name-prefix': 'off'
+  '@typescript-eslint/explicit-function-return-type': 'off'
+  '@typescript-eslint/explicit-module-boundary-types': 'off'
+  '@typescript-eslint/no-explicit-any': 'off'
+  import/prefer-default-export: 'off'
+  '@typescript-eslint/indent':
     - error
     - 2
-    - 
-      SwitchCase: 1
+    - SwitchCase: 1
       ignoredNodes:
         - TSTypeParameterInstantiation
-        - "FunctionExpression > .params[decorators.length > 0]"
-        - "FunctionExpression > .params > :matches(Decorator, :not(:first-child))"
-        - "ClassBody.body > PropertyDefinition[decorators.length > 0] > .key"
-  "@typescript-eslint/space-before-function-paren": 
+        - FunctionExpression > .params[decorators.length > 0]
+        - FunctionExpression > .params > :matches(Decorator, :not(:first-child))
+        - ClassBody.body > PropertyDefinition[decorators.length > 0] > .key
+  '@typescript-eslint/space-before-function-paren':
     - error
-    -
-      anonymous: never
+    - anonymous: never
       named: never
-  "eol-last":
+  eol-last:
     - error
     - never
-  "@typescript-eslint/object-curly-spacing": off
-  "object-curly-newline":
+  '@typescript-eslint/object-curly-spacing': 'off'
+  object-curly-newline:
     - error
-    -
-      ObjectPattern:
+    - ObjectPattern:
         multiline: true
         consistent: true
-  "no-trailing-spaces":
+  no-trailing-spaces:
     - error
-    -
-      skipBlankLines: true
+    - skipBlankLines: true
       ignoreComments: true
-  "@typescript-eslint/semi":
+  '@typescript-eslint/semi':
     - error
     - always
-    -
-      omitLastInOneLineBlock: true
-  "max-classes-per-file": off
-  "no-case-declarations": off
-  "@typescript-eslint/keyword-spacing":
+    - omitLastInOneLineBlock: true
+  max-classes-per-file: 'off'
+  no-case-declarations: 'off'
+  '@typescript-eslint/keyword-spacing':
     - error
-    -
-      overrides:
-        if: {after: false}
-        switch: {after: false}
-        for: {after: false}
-        while: {after: false}
-        catch: {after: false}
-  "@typescript-eslint/ban-ts-comment":
+    - overrides:
+        if:
+          after: false
+        switch:
+          after: false
+        for:
+          after: false
+        while:
+          after: false
+        catch:
+          after: false
+  '@typescript-eslint/ban-ts-comment':
+    - error
+    - ts-ignore: allow-with-description
+  max-len: 'off'
+  '@typescript-eslint/return-await': 'off'
+  consistent-return:
+    - error
+    - treatUndefinedAsUnspecified: true
+  class-methods-use-this: 'off'
+  arrow-body-style: 'off'
+  '@typescript-eslint/space-infix-ops': 'off'
+  no-underscore-dangle:
     - error
     - 
-      "ts-ignore": "allow-with-description"
-  "max-len": off
-  "@typescript-eslint/return-await": off
-  "consistent-return":
-    - error
-    - 
-      treatUndefinedAsUnspecified: true
-  "class-methods-use-this": off
-  "arrow-body-style": off
-  "@typescript-eslint/space-infix-ops": off
-  "no-underscore-dangle":
-    - error
-    - 
+      allowAfterThis: true
       # prisma count
-      allow: ["_count"]
-  "prefer-regex-literals": off
-  "new-cap": off
-  "no-param-reassign":
+      allow:
+        - _count
+  prefer-regex-literals: 'off'
+  new-cap: 'off'
+  no-param-reassign:
     - error
-    - 
-      props: false
-  "arrow-parens": 
+    - props: false
+  arrow-parens:
     - error
-    - "as-needed"
-  "@typescript-eslint/no-empty-interface": off
-  "@typescript-eslint/lines-between-class-members": off
-  "no-nested-ternary": off
+    - as-needed
+  '@typescript-eslint/no-empty-interface': 'off'
+  '@typescript-eslint/lines-between-class-members': 'off'
+  no-nested-ternary: 'off'
   yoda:
     - error
     - never
-    - 
-      exceptRange: true
-  "@typescript-eslint/no-redeclare": off
+    - exceptRange: true
+  '@typescript-eslint/no-redeclare': 'off'

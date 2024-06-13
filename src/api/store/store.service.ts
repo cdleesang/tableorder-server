@@ -1,9 +1,9 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { ConfigService } from '../../config/config.service';
-import { SelversClientService } from '../../providers/selvers-client/selvers-client.service';
 import { NotificationService } from '../notification/notification.service';
 import { GetAllSlideImagesResponse } from './types/store-response.type';
+import { SelversClientService } from '../../common/modules/selvers-client/selvers-client.service';
 
 @Injectable()
 export class StoreService implements OnModuleInit {

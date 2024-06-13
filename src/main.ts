@@ -13,15 +13,17 @@ async function bootstrap() {
 
   if(process.env.NODE_ENV === 'development') {
     app.enableCors();
-
+    
     const swaggerPath = join(process.cwd(), 'dist', 'swagger.json');
     if(existsSync(swaggerPath)) {
       const document = JSON.parse(
         readFileSync(swaggerPath).toString('utf-8'),
       );
-      SwaggerModule.setup('docs', app, document);
+      SwaggerModule.setup('api/docs', app, document);
     }
   }
+        
+  app.setGlobalPrefix('api');
 
   await app.listen(PORT, () => {
     process.send?.('ready');

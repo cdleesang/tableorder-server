@@ -8,7 +8,8 @@ import { NotificationModule } from './api/notification/notification.module';
 import { OrderModule } from './api/order/order.module';
 import { StoreModule } from './api/store/store.module';
 import { ConfigModule } from './config/config.module';
-import { PrismaModule } from './providers/prisma/prisma.module';
+import { PrismaModule } from './common/modules/prisma/prisma.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { PrismaModule } from './providers/prisma/prisma.module';
     }),
     PrismaModule,
     ConfigModule,
+    AdminModule,
     CallStaffModule,
     MenuModule,
     CartModule,

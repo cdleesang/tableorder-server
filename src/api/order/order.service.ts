@@ -1,12 +1,12 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import typia from 'typia';
 import { ConfigService } from '../../config/config.service';
-import { SelversClientService } from '../../providers/selvers-client/selvers-client.service';
-import { PrismaService } from '../../providers/prisma/prisma.service';
 import { CartService } from '../cart/cart.service';
 import { OrderImmediatelyBody } from './types/order-request.type';
 import { GetAllOrderHistoriesResponse, GetOrderHistoriesByTableId } from './types/order-response.type';
-import { PosHTableRepository } from '../../providers/pos-repository/pos-h-table.repository';
+import { PosHTableRepository } from '../../common/modules/pos-repository/pos-h-table.repository';
+import { PrismaService } from '../../common/modules/prisma/prisma.service';
+import { SelversClientService } from '../../common/modules/selvers-client/selvers-client.service';
 
 @Injectable()
 export class OrderService {

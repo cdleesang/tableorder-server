@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '../../config/config.service';
-import { PageNotFoundError } from '../../providers/selvers-client/errors/page-not-found.error';
-import { SelversClientService } from '../../providers/selvers-client/selvers-client.service';
 import { GetMenuCategoriesResponse, GetMenuDetailById, GetPaginatedMenusByCategory } from './types/menu-response.type';
+import { PageNotFoundError } from '../../common/modules/selvers-client/errors/page-not-found.error';
+import { SelversClientService } from '../../common/modules/selvers-client/selvers-client.service';
 
 @Injectable()
 export class MenuService {

@@ -1,9 +1,9 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '../../config/config.service';
-import { EntityNotFoundErrors } from '../../providers/prisma/errors/entity-not-found.error';
-import { PrismaService } from '../../providers/prisma/prisma.service';
-import { SelversClientService } from '../../providers/selvers-client/selvers-client.service';
 import { GetCallStaffOptionsResponse } from './types/call-staff-response.type';
+import { EntityNotFoundErrors } from '../../common/modules/prisma/errors/entity-not-found.error';
+import { PrismaService } from '../../common/modules/prisma/prisma.service';
+import { SelversClientService } from '../../common/modules/selvers-client/selvers-client.service';
 
 @Injectable()
 export class CallStaffService {

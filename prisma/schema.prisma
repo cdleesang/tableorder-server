@@ -21,3 +21,12 @@ model Table {
   signInId String
   password String
 }
+
+model Admin {
+  id        String   @id
+  signInId  String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
