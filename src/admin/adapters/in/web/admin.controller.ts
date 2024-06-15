@@ -3,9 +3,10 @@ import { Controller, UseFilters, UseGuards, type ConflictException, type Forbidd
 import { DeleteAdminService, SearchAdminsService, SignUpAdminService, UpdateAdminOwnPasswordService, UpdateAdminOwnProfileService, ViewAdminOwnProfileService } from 'src/admin/domain/services';
 import { CurrentAdmin } from 'src/auth/decorators/current-admin.decorator';
 import type { AdminAuthorization } from 'src/auth/domain/models/admin-authorization.model';
+import { AdminPermissionDeniedExceptionFilter } from 'src/auth/filters/admin-permission-denied-exception.filter';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
 import type { SearchRequestDto, SearchResponseDto, SignUpRequestDto, UpdateOwnPasswordRequestDto, UpdateOwnProfileRequestDto, ViewOwnProfileResponseDto } from './dto';
-import { DeleteExceptionFilter, SignUpExceptionFilter, UpdateOwnPasswordExceptionFilter, UpdateOwnProfileExceptionFilter, ViewOwnProfileExceptionFilter } from './filters';
+import { SignUpExceptionFilter, UpdateOwnPasswordExceptionFilter, UpdateOwnProfileExceptionFilter, ViewOwnProfileExceptionFilter } from './filters';
 
 @Controller('/admin')
 export class AdminController {
@@ -54,7 +55,8 @@ export class AdminController {
   @UseFilters(ViewOwnProfileExceptionFilter)
   @TypedException<UnauthorizedException>(401, '로그인되지 않음')
   @TypedException<NotFoundException>(404, '관리자를 찾을 수 없음')
-  viewOwnProfile(@CurrentAdmin() adminAuthorization: AdminAuthorization): Promise<ViewOwnProfileResponseDto> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- id is used for route
+  viewOwnProfile(@CurrentAdmin() adminAuthorization: AdminAuthorization, @TypedParam('id') id: string): Promise<ViewOwnProfileResponseDto> {
     return this.viewAdminOwnProfileService.execute(adminAuthorization);
   }
 
@@ -69,7 +71,8 @@ export class AdminController {
   @UseFilters(UpdateOwnProfileExceptionFilter)
   @TypedException<UnauthorizedException>(401, '로그인되지 않음')
   @TypedException<NotFoundException>(404, '관리자를 찾을 수 없음')
-  updateOwnProfile(@CurrentAdmin() adminAuthorization: AdminAuthorization, @TypedBody() body: UpdateOwnProfileRequestDto): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- id is used for route
+  updateOwnProfile(@CurrentAdmin() adminAuthorization: AdminAuthorization, @TypedParam('id') id: string, @TypedBody() body: UpdateOwnProfileRequestDto): Promise<void> {
     return this.updateAdminOwnProfileService.execute(adminAuthorization, body);
   }
 
@@ -85,7 +88,8 @@ export class AdminController {
   @TypedException<UnauthorizedException>(401, '로그인되지 않음')
   @TypedException<NotFoundException>(404, '관리자를 찾을 수 없음')
   @TypedException<ConflictException>(409, '현재 비밀번호가 일치하지 않음')
-  updateOwnPassword(@CurrentAdmin() adminAuthorization: AdminAuthorization, @TypedBody() body: UpdateOwnPasswordRequestDto): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- id is used for route
+  updateOwnPassword(@CurrentAdmin() adminAuthorization: AdminAuthorization, @TypedParam('id') id: string, @TypedBody() body: UpdateOwnPasswordRequestDto): Promise<void> {
     return this.updateAdminOwnPasswordService.execute(adminAuthorization, body.currentPassword, body.newPassword);
   }
 
@@ -97,7 +101,7 @@ export class AdminController {
    */
   @TypedRoute.Delete('/:id')
   @UseGuards(AdminGuard)
-  @UseFilters(DeleteExceptionFilter)
+  @UseFilters(AdminPermissionDeniedExceptionFilter)
   @TypedException<UnauthorizedException>(401, '로그인되지 않음')
   @TypedException<ForbiddenException>(403, '권한 없음')
   delete(@CurrentAdmin() adminAuthorization: AdminAuthorization, @TypedParam('id') id: string): Promise<void> {

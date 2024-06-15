@@ -1,14 +1,14 @@
 import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '../../config/config.service';
 import { GetAllCartItems } from './types/cart-response.type';
-import { PrismaService } from '../../common/modules/prisma/prisma.service';
+import { LegacyPrismaService } from '../../common/modules/prisma/legacy-prisma.service';
 import { SelversClientService } from '../../common/modules/selvers-client/selvers-client.service';
 
 @Injectable()
 export class CartService {
   constructor(
     private readonly configService: ConfigService,
-    private readonly prismaService: PrismaService,
+    private readonly prismaService: LegacyPrismaService,
     private readonly selversClientService: SelversClientService,
   ) {}
 

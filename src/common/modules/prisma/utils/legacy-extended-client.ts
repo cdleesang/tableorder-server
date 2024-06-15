@@ -1,9 +1,9 @@
 import { PrismaClient } from '@prisma/client';
-import { errorHandleExtension } from '../extensions/error-handle.extension';
+import { legacyErrorHandleExtension } from '../extensions/legacy-error-handle.extension';
 
 function extendClient(basePrismaClient: PrismaClient) {
   return basePrismaClient
-    .$extends(errorHandleExtension);
+    .$extends(legacyErrorHandleExtension);
 }
 
 class UntypedExtendedClient extends PrismaClient {
@@ -15,6 +15,6 @@ class UntypedExtendedClient extends PrismaClient {
   }
 }
 
-export const ExtendedPrismaClient = UntypedExtendedClient as unknown as new (
+export const LegacyExtendedPrismaClient = UntypedExtendedClient as unknown as new (
   options?: ConstructorParameters<typeof PrismaClient>[0]
 ) => ReturnType<typeof extendClient>;

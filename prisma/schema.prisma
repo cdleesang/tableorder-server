@@ -23,10 +23,19 @@ model Table {
 }
 
 model Admin {
-  id        String   @id
-  signInId  String   @unique
-  password  String
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String            @id
+  signInId        String            @unique
+  password        String
+  name            String
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  AdminPermission AdminPermission[]
+}
+
+model AdminPermission {
+  adminId    String
+  admin      Admin  @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  permission String
+
+  @@id([adminId, permission])
 }

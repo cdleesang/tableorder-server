@@ -3,8 +3,8 @@ import { DatabaseError } from '../errors/database.error';
 import { EntityNotFoundErrors } from '../errors/entity-not-found.error';
 import { UniqueFieldDuplicateError } from '../errors/unique-field-duplicate.error';
 
-export const errorHandleExtension = Prisma.defineExtension({
-  name: 'error handle',
+export const legacyErrorHandleExtension = Prisma.defineExtension({
+  name: 'legacy error handle',
   query: {
     $allModels: {
       async $allOperations({ model, operation, args, query }) {

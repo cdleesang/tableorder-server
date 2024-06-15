@@ -17,7 +17,7 @@ export class SearchAdminsService {
     const admins = await this.adminRepository.findAll({
       page,
       limit: size,
-      order: 'newest',
+      order: 'oldest',
     });
 
     return admins.map(admin => ({

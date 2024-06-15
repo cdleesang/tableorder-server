@@ -5,14 +5,14 @@ import { CartService } from '../cart/cart.service';
 import { OrderImmediatelyBody } from './types/order-request.type';
 import { GetAllOrderHistoriesResponse, GetOrderHistoriesByTableId } from './types/order-response.type';
 import { PosHTableRepository } from '../../common/modules/pos-repository/pos-h-table.repository';
-import { PrismaService } from '../../common/modules/prisma/prisma.service';
+import { LegacyPrismaService } from '../../common/modules/prisma/legacy-prisma.service';
 import { SelversClientService } from '../../common/modules/selvers-client/selvers-client.service';
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly configService: ConfigService,
-    private readonly prismaService: PrismaService,
+    private readonly prismaService: LegacyPrismaService,
     private readonly selversClientService: SelversClientService,
     private readonly cartService: CartService,
     private readonly posHTableRepository: PosHTableRepository,

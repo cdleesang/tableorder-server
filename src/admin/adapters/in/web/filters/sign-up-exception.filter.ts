@@ -1,13 +1,15 @@
-import { Catch, ConflictException, type ExceptionFilter } from '@nestjs/common';
+import { ArgumentsHost, Catch, ConflictException } from '@nestjs/common';
+import { BaseExceptionFilter } from '@nestjs/core';
 import { AdminAlreadyExistsError } from 'src/admin/domain/errors/admin-already-exists.error';
 
 @Catch(AdminAlreadyExistsError)
-export class SignUpExceptionFilter implements ExceptionFilter {
-  catch(exception: any) {
+export class SignUpExceptionFilter extends BaseExceptionFilter {
+  catch(exception: any, host: ArgumentsHost) {
     if(exception instanceof AdminAlreadyExistsError) {
-      throw new ConflictException('Admin already exists');
+      super.catch(new ConflictException('Admin already exists'), host);
+      return;
     }
       
-    throw exception;
+    super.catch(exception, host);
   }
 }

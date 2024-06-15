@@ -1,16 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import type { Prisma, Admin as PrismaAdmin } from '@prisma/client';
+import { Prisma, Admin as PrismaAdmin } from '@prisma/client';
 import { PrismaService } from 'src/common/modules/prisma/prisma.service';
 import { Admin } from '../../domain/models/admin.model';
 import { AdminRepository } from '../../ports/out/admin-repository.port';
 
 @Injectable()
 export class AdminRepositoryImpl implements AdminRepository {
-  constructor(
-    private prismaService: PrismaService,
-  ) {
-    console.log(prismaService)
-  }
+  constructor(private readonly prismaService: PrismaService) {}
 
   async save(admin: Admin): Promise<void> {
     await this.prismaService.admin.upsert({
@@ -31,9 +27,9 @@ export class AdminRepositoryImpl implements AdminRepository {
   async findAll(options: {
     page?: number;
     limit?: number;
-    order?: 'newest';
+    order?: 'oldest';
   }): Promise<Admin[]> {
-    const orderBy: Prisma.AdminOrderByWithRelationInput[] = options.order === 'newest' ? [{ createdAt: 'desc' }] : [];
+    const orderBy: Prisma.AdminOrderByWithRelationInput[] = options.order === 'oldest' ? [{ createdAt: 'asc' }] : [];
 
     const results = await this.prismaService.admin.findMany({
       skip: options.page ? (options.page - 1) * (options.limit ?? 0) : 0,
@@ -53,9 +49,18 @@ export class AdminRepositoryImpl implements AdminRepository {
   }
 
   async deleteById(id: string): Promise<void> {
-    await this.prismaService.admin.delete({
-      where: { id },
-    });
+    try {
+      await this.prismaService.admin.delete({
+        where: { id },
+      });
+    } catch(err) {
+      if(err instanceof Prisma.PrismaClientKnownRequestError) {
+        if(err.code === 'P2025') {
+          return;
+        }
+      }
+      throw err;
+    }
   }
 
   private async findOne(options: Prisma.AdminFindUniqueArgs): Promise<Admin | null> {

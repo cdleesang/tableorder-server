@@ -2,14 +2,14 @@ import { Injectable, InternalServerErrorException, NotFoundException } from '@ne
 import { ConfigService } from '../../config/config.service';
 import { GetCallStaffOptionsResponse } from './types/call-staff-response.type';
 import { EntityNotFoundErrors } from '../../common/modules/prisma/errors/entity-not-found.error';
-import { PrismaService } from '../../common/modules/prisma/prisma.service';
+import { LegacyPrismaService } from '../../common/modules/prisma/legacy-prisma.service';
 import { SelversClientService } from '../../common/modules/selvers-client/selvers-client.service';
 
 @Injectable()
 export class CallStaffService {
   constructor(
     private readonly configService: ConfigService,
-    private readonly prismaService: PrismaService,
+    private readonly prismaService: LegacyPrismaService,
     private readonly selversClientService: SelversClientService,
   ) {}
 

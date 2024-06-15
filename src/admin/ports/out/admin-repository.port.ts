@@ -5,7 +5,7 @@ export interface AdminRepository {
   findAll(options: {
     page?: number;
     limit?: number;
-    order?: 'newest';
+    order?: 'oldest';
   }): Promise<Admin[]>;
   findById(id: string): Promise<Admin | null>;
   findBySignInId(signInId: string): Promise<Admin | null>;
