@@ -1,5 +1,8 @@
 // eslint-disable-next-line import/no-extraneous-dependencies -- devDependencies
 import { INestiaConfig } from '@nestia/sdk';
+import { VersioningType } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from 'src/app.module';
 
 export const NESTIA_CONFIG: INestiaConfig = {
   /**
@@ -11,21 +14,16 @@ export const NESTIA_CONFIG: INestiaConfig = {
    *   - Specify the path or directory of controller class files
    */
   // input: 'src/controllers',
-  input: 'src/**/*.controller.ts',
-  // input: async () => {
-  //     // change this to your own module
-  //     @Module({
-  //         controllers: [],
-  //     })
-  //     class MyModule {}
-  //     const app = await NestFactory.create(MyModule);
-  //     // app.setGlobalPrefix('api');
-  //     // app.enableVersioning({
-  //     //     type: VersioningType.URI,
-  //     //     prefix: 'v',
-  //     // })
-  //     return app;
-  // },
+  // input: 'src/**/*.controller.ts',
+  input: async () => {
+    const app = await NestFactory.create(AppModule);
+    // app.setGlobalPrefix('api');
+    app.enableVersioning({
+      type: VersioningType.URI,
+      prefix: '',
+    });
+    return app;
+  },
 
   /**
    * Output directory that SDK would be placed in.
@@ -58,10 +56,15 @@ export const NESTIA_CONFIG: INestiaConfig = {
         scheme: 'bearer',
         bearerFormat: 'JWT',
       },
+      table: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
     },
     servers: [
       {
-        url: 'http://localhost:3000/api',
+        url: 'http://localhost:3000',
         description: 'Local Server',
       },
     ],

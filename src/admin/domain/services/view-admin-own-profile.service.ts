@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { AdminAuthorization } from 'src/auth/domain/models/admin-authorization.model';
-import { AdminRepository } from '../../ports/out/admin-repository.port';
-import { AdminNotFoundError } from '../errors/admin-not-found.error';
+import type { AdminAuthority } from 'src/auth/domain/models/admin-authority';
+import { AdminRepository } from '../../ports/out/admin-repository';
+import { AdminNotFoundError } from '../errors/admin-not-found-error';
 
 interface Response {
   id: string;
@@ -16,8 +16,8 @@ export class ViewAdminOwnProfileService {
     @Inject(AdminRepository) private readonly adminRepository: AdminRepository,
   ) {}
 
-  async execute(adminAuthorization: AdminAuthorization): Promise<Response> {
-    const admin = await this.adminRepository.findById(adminAuthorization.adminId);
+  async execute(authority: AdminAuthority): Promise<Response> {
+    const admin = await this.adminRepository.findById(authority.adminId);
 
     if(!admin) {
       throw new AdminNotFoundError();

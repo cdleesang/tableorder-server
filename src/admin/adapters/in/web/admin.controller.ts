@@ -1,14 +1,14 @@
-import { TypedBody, TypedException, TypedParam, TypedQuery, TypedRoute } from '@nestia/core';
-import { Controller, UseFilters, UseGuards, type ConflictException, type ForbiddenException, type NotFoundException, type UnauthorizedException } from '@nestjs/common';
+import { TypedBody, TypedParam, TypedQuery, TypedRoute } from '@nestia/core';
+import { Controller } from '@nestjs/common';
 import { DeleteAdminService, SearchAdminsService, SignUpAdminService, UpdateAdminOwnPasswordService, UpdateAdminOwnProfileService, ViewAdminOwnProfileService } from 'src/admin/domain/services';
-import { CurrentAdmin } from 'src/auth/decorators/current-admin.decorator';
-import type { AdminAuthorization } from 'src/auth/domain/models/admin-authorization.model';
-import { AdminPermissionDeniedExceptionFilter } from 'src/auth/filters/admin-permission-denied-exception.filter';
-import { AdminGuard } from 'src/auth/guards/admin.guard';
+import type { AdminAuthority } from 'src/auth/domain/models/admin-authority';
+import { CurrentAdmin } from 'src/auth/utils/decorators/current-admin.decorator';
+import { UseAdminGuard } from 'src/auth/utils/decorators/use-admin-guard.decorator';
+import { UseAdminPermissionDeniedExceptionFilter } from 'src/auth/utils/filters/admin-permission-denied-exception.filter';
 import type { SearchRequestDto, SearchResponseDto, SignUpRequestDto, UpdateOwnPasswordRequestDto, UpdateOwnProfileRequestDto, ViewOwnProfileResponseDto } from './dto';
-import { SignUpExceptionFilter, UpdateOwnPasswordExceptionFilter, UpdateOwnProfileExceptionFilter, ViewOwnProfileExceptionFilter } from './filters';
+import { UseSignUpExceptionFilter, UseUpdateOwnPasswordExceptionFilter, UseUpdateOwnProfileExceptionFilter, UseViewOwnProfileExceptionFilter } from './filters';
 
-@Controller('/admin')
+@Controller({path: 'admin', version: 'api'})
 export class AdminController {
   constructor(
     private readonly signUpAdminService: SignUpAdminService,
@@ -25,8 +25,7 @@ export class AdminController {
    * @tag 관리자
    */
   @TypedRoute.Post('/sign-up')
-  @TypedException<ConflictException>(409, '이미 존재하는 아이디')
-  @UseFilters(SignUpExceptionFilter)
+  @UseSignUpExceptionFilter()
   signUp(@TypedBody() body: SignUpRequestDto): Promise<void> {
     return this.signUpAdminService.execute(body.signInId, body.password, body.name);
   }
@@ -38,8 +37,7 @@ export class AdminController {
    * @security admin
    */
   @TypedRoute.Get('/')
-  @UseGuards(AdminGuard)
-  @TypedException<UnauthorizedException>(401, '로그인되지 않음')
+  @UseAdminGuard()
   search(@TypedQuery() query: SearchRequestDto): Promise<SearchResponseDto> {
     return this.searchAdminsService.execute(query.page, query.size);
   }
@@ -50,14 +48,11 @@ export class AdminController {
    * @tag 관리자
    * @security admin
    */
-  @TypedRoute.Get('/:id')
-  @UseGuards(AdminGuard)
-  @UseFilters(ViewOwnProfileExceptionFilter)
-  @TypedException<UnauthorizedException>(401, '로그인되지 않음')
-  @TypedException<NotFoundException>(404, '관리자를 찾을 수 없음')
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- id is used for route
-  viewOwnProfile(@CurrentAdmin() adminAuthorization: AdminAuthorization, @TypedParam('id') id: string): Promise<ViewOwnProfileResponseDto> {
-    return this.viewAdminOwnProfileService.execute(adminAuthorization);
+  @TypedRoute.Get('/self')
+  @UseAdminGuard()
+  @UseViewOwnProfileExceptionFilter()
+  viewOwnProfile(@CurrentAdmin() authority: AdminAuthority): Promise<ViewOwnProfileResponseDto> {
+    return this.viewAdminOwnProfileService.execute(authority);
   }
 
   /**
@@ -66,14 +61,11 @@ export class AdminController {
    * @tag 관리자
    * @security admin
    */
-  @TypedRoute.Patch('/:id')
-  @UseGuards(AdminGuard)
-  @UseFilters(UpdateOwnProfileExceptionFilter)
-  @TypedException<UnauthorizedException>(401, '로그인되지 않음')
-  @TypedException<NotFoundException>(404, '관리자를 찾을 수 없음')
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- id is used for route
-  updateOwnProfile(@CurrentAdmin() adminAuthorization: AdminAuthorization, @TypedParam('id') id: string, @TypedBody() body: UpdateOwnProfileRequestDto): Promise<void> {
-    return this.updateAdminOwnProfileService.execute(adminAuthorization, body);
+  @TypedRoute.Patch('/self')
+  @UseAdminGuard()
+  @UseUpdateOwnProfileExceptionFilter()
+  updateOwnProfile(@CurrentAdmin() authority: AdminAuthority, @TypedBody() body: UpdateOwnProfileRequestDto): Promise<void> {
+    return this.updateAdminOwnProfileService.execute(authority, body);
   }
 
   /**
@@ -82,29 +74,24 @@ export class AdminController {
    * @tag 관리자
    * @security admin
    */
-  @TypedRoute.Patch('/:id/password')
-  @UseGuards(AdminGuard)
-  @UseFilters(UpdateOwnPasswordExceptionFilter)
-  @TypedException<UnauthorizedException>(401, '로그인되지 않음')
-  @TypedException<NotFoundException>(404, '관리자를 찾을 수 없음')
-  @TypedException<ConflictException>(409, '현재 비밀번호가 일치하지 않음')
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- id is used for route
-  updateOwnPassword(@CurrentAdmin() adminAuthorization: AdminAuthorization, @TypedParam('id') id: string, @TypedBody() body: UpdateOwnPasswordRequestDto): Promise<void> {
-    return this.updateAdminOwnPasswordService.execute(adminAuthorization, body.currentPassword, body.newPassword);
+  @TypedRoute.Patch('/self/password')
+  @UseAdminGuard()
+  @UseUpdateOwnPasswordExceptionFilter()
+  updateOwnPassword(@CurrentAdmin() authority: AdminAuthority, @TypedBody() body: UpdateOwnPasswordRequestDto): Promise<void> {
+    return this.updateAdminOwnPasswordService.execute(authority, body.currentPassword, body.newPassword);
   }
 
   /**
    * 관리자 삭제.
+   * - 관리자: 관리자 삭제 권한 필요
    * 
    * @tag 관리자
    * @security admin
    */
   @TypedRoute.Delete('/:id')
-  @UseGuards(AdminGuard)
-  @UseFilters(AdminPermissionDeniedExceptionFilter)
-  @TypedException<UnauthorizedException>(401, '로그인되지 않음')
-  @TypedException<ForbiddenException>(403, '권한 없음')
-  delete(@CurrentAdmin() adminAuthorization: AdminAuthorization, @TypedParam('id') id: string): Promise<void> {
-    return this.deleteAdminService.execute(adminAuthorization, id);
+  @UseAdminGuard()
+  @UseAdminPermissionDeniedExceptionFilter()
+  delete(@CurrentAdmin() authority: AdminAuthority, @TypedParam('id') id: string): Promise<void> {
+    return this.deleteAdminService.execute(authority, id);
   }
 }

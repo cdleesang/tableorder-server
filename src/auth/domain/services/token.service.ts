@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '../../../config/config.service';
-import { AdminAuthorization } from '../models/admin-authorization.model';
-import type { AdminTokenPayload } from '../models/admin-token-payload.type';
+import { AdminAuthority } from '../models/admin-authority';
+import type { AdminAccessTokenPayload, AdminRefreshTokenPayload } from '../models/admin-token-payload';
+import { TableAccessTokenPayload } from '../models/table-token-payload';
+import { Table } from '../models/table';
+import { AdminRefreshTokenInfo } from '../models/admin-refresh-token-info';
 
 @Injectable()
 export class TokenService {
@@ -11,24 +14,23 @@ export class TokenService {
     private readonly configService: ConfigService,
   ) {}
 
-  issueAdminToken(adminAuthorization: AdminAuthorization): string {
-    const payload: AdminTokenPayload = {
-      adminId: adminAuthorization.adminId,
-      permissions: adminAuthorization.permissions,
+  async issueTableAccessToken(table: Table): Promise<string> {
+    const payload: TableAccessTokenPayload = {
+      tableId: table.id,
+      tableName: table.name,
     };
 
     return this.jwtService.sign(payload, {
-      secret: this.configService.get('JWT_SECRET'),
-      audience: 'admin',
-      expiresIn: '30m',
+      secret: this.configService.get('TABLE_JWT_SECRET'),
+      audience: 'table',
     });
   }
 
-  checkAdminToken(token: string): boolean {
+  checkTableAccessToken(token: string): boolean {
     try {
       this.jwtService.verify(token, {
-        secret: this.configService.get('JWT_SECRET'),
-        audience: 'admin',
+        secret: this.configService.get('TABLE_JWT_SECRET'),
+        audience: 'table',
       });
       return true;
     } catch{
@@ -36,9 +38,69 @@ export class TokenService {
     }
   }
 
-  decodeAdminToken(token: string): AdminAuthorization {
-    const payload = this.jwtService.decode<AdminTokenPayload>(token);
+  decodeTableAccessToken(token: string): TableAccessTokenPayload {
+    return this.jwtService.decode<TableAccessTokenPayload>(token);
+  }
 
-    return new AdminAuthorization(payload.adminId, payload.permissions);
+  issueAdminAccessToken(authority: AdminAuthority): string {
+    const payload: AdminAccessTokenPayload = {
+      adminId: authority.adminId,
+      permissions: authority.permissions,
+    };
+
+    return this.jwtService.sign(payload, {
+      secret: this.configService.get('ADMIN_JWT_SECRET'),
+      audience: 'admin_access',
+      expiresIn: '5m',
+    });
+  }
+
+  checkAdminAccessToken(token: string): boolean {
+    try {
+      this.jwtService.verify(token, {
+        secret: this.configService.get('ADMIN_JWT_SECRET'),
+        audience: 'admin_access',
+      });
+      return true;
+    } catch{
+      return false;
+    }
+  }
+
+  decodeAdminAccessToken(token: string): AdminAuthority {
+    const payload = this.jwtService.decode<AdminAccessTokenPayload>(token);
+
+    return new AdminAuthority(payload.adminId, payload.permissions);
+  }
+
+  issueAdminRefreshToken(authority: AdminAuthority): AdminRefreshTokenInfo {
+    const payload: AdminRefreshTokenPayload = {
+      adminId: authority.adminId,
+    };
+
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: this.configService.get('ADMIN_REFRESH_JWT_SECRET'),
+      audience: 'admin_refresh',
+      expiresIn: '30d',
+    });
+    const { exp } = this.decodeAdminRefreshToken(refreshToken);
+
+    return new AdminRefreshTokenInfo(authority.adminId, refreshToken, new Date(exp! * 1000));
+  }
+
+  checkAdminRefreshToken(token: string): boolean {
+    try {
+      this.jwtService.verify(token, {
+        secret: this.configService.get('ADMIN_REFRESH_JWT_SECRET'),
+        audience: 'admin_refresh',
+      });
+      return true;
+    } catch{
+      return false;
+    }
+  }
+
+  decodeAdminRefreshToken(token: string): AdminRefreshTokenPayload {
+    return this.jwtService.decode<AdminRefreshTokenPayload>(token);
   }
 }

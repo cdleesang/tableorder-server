@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { AdminAuthorization } from 'src/auth/domain/models/admin-authorization.model';
-import { AdminPermission } from 'src/auth/domain/models/admin-permission.enum';
+import type { AdminAuthority } from 'src/auth/domain/models/admin-authority';
+import { AdminPermission } from 'src/auth/domain/models/admin-permission';
 import { CanAdminAccessService } from 'src/auth/domain/services/can-admin-access.service';
-import { AdminRepository } from '../../ports/out/admin-repository.port';
-import { AdminPermissionDeniedError } from '../../../auth/domain/errors/admin-permission-denied.error';
+import { AdminRepository } from '../../ports/out/admin-repository';
+import { AdminPermissionDeniedError } from '../../../auth/domain/errors/admin-permission-denied-error';
 
 @Injectable()
 export class DeleteAdminService {
@@ -12,10 +12,10 @@ export class DeleteAdminService {
     private readonly canAdminAccessService: CanAdminAccessService,
   ) {}
 
-  async execute(adminAuthorization: AdminAuthorization, targetId: string): Promise<void> {
-    const isAccessible = await this.canAdminAccessService.execute(adminAuthorization, AdminPermission.DELETE_ADMIN);
+  async execute(authority: AdminAuthority, targetId: string): Promise<void> {
+    const isAccessible = await this.canAdminAccessService.execute(authority, AdminPermission.DELETE_ADMIN);
 
-    if(!(adminAuthorization.adminId === targetId || isAccessible)) {
+    if(!(authority.adminId === targetId || isAccessible)) {
       throw new AdminPermissionDeniedError();
     }
 

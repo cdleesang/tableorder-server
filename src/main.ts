@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { existsSync, readFileSync } from 'fs';
@@ -22,8 +22,14 @@ async function bootstrap() {
       SwaggerModule.setup('api/docs', app, document);
     }
   }
-        
-  app.setGlobalPrefix('api');
+  
+  app.enableVersioning({
+    type: VersioningType.URI,
+    prefix: false,
+  });
+
+  // TODO: 프론트엔드 구현 후 버저닝 끄고 주석 해제
+  // app.setGlobalPrefix('api');
 
   await app.listen(PORT, () => {
     process.send?.('ready');

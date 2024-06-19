@@ -1,31 +1,46 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { AdminRefreshTokenRepository } from 'src/auth/ports/out/admin-refresh-token-repository';
 import { CredentialVerificationService } from '../../../admin/domain/services/credential-verification.service';
-import { SignInFailedError } from '../errors/sign-in-failed.error';
+import { AdminAuthorityRepository } from '../../ports/out/admin-authority-repository';
+import { SignInFailedError } from '../errors/sign-in-failed-error';
+import { AdminAuthority } from '../models/admin-authority';
 import { TokenService } from './token.service';
-import { AdminAuthorizationRepository } from '../../ports/out/admin-authorization-repository.port';
-import { AdminAuthorization } from '../models/admin-authorization.model';
+
+interface Response {
+  accessToken: string;
+  refreshToken: string;
+}
 
 @Injectable()
 export class AdminSignInService {
   constructor(
-    @Inject(AdminAuthorizationRepository) private readonly adminAuthorizationRepository: AdminAuthorizationRepository,
+    @Inject(AdminAuthorityRepository) private readonly adminAuthorityRepository: AdminAuthorityRepository,
+    @Inject(AdminRefreshTokenRepository) private readonly adminRefreshTokenRepository: AdminRefreshTokenRepository,
     private readonly credentialVerificationService: CredentialVerificationService,
     private readonly tokenService: TokenService,
   ) {}
 
-  async execute(signInId: string, password: string): Promise<string> {
+  async execute(signInId: string, password: string): Promise<Response> {
     const verified = await this.credentialVerificationService.execute(signInId, password);
 
     if(!verified) {
       throw new SignInFailedError();
     }
 
-    let authorization = await this.adminAuthorizationRepository.findByAdminId(verified.id);
+    let authority = await this.adminAuthorityRepository.findByAdminId(verified.id);
 
-    if(!authorization) {
-      authorization = new AdminAuthorization(verified.id, []);
+    if(!authority) {
+      authority = new AdminAuthority(verified.id, []);
     }
 
-    return this.tokenService.issueAdminToken(authorization);
+    const accessToken = this.tokenService.issueAdminAccessToken(authority);
+    const refreshTokenInfo = this.tokenService.issueAdminRefreshToken(authority);
+
+    await this.adminRefreshTokenRepository.save(refreshTokenInfo);
+
+    return {
+      accessToken,
+      refreshToken: refreshTokenInfo.refreshToken,
+    };
   }
 }

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { FirebirdService } from '../firebird/firebird.service';
-import { Column } from './decorators/column.decorator';
-import { Transform } from '../../decorators/transform.decorator';
-import { BasePosRepository } from './base-pos.repository';
+import { Column } from '../firebird/decorators/column.decorator';
+import { Transform } from '../firebird/decorators/transform.decorator';
+import { BasePosRepository } from '../firebird/base-pos.repository';
 
 class HTableEntity {
   /** 주문번호 */

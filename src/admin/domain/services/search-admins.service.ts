@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { AdminRepository } from '../../ports/out/admin-repository.port';
+import { AdminRepository } from '../../ports/out/admin-repository';
 
 interface AdminInfo {
   id: string;

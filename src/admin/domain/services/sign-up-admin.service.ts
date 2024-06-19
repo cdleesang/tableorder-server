@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { AdminRepository } from '../../ports/out/admin-repository.port';
-import { AdminAlreadyExistsError } from '../errors/admin-already-exists.error';
-import { Admin } from '../models/admin.model';
+import { AdminRepository } from '../../ports/out/admin-repository';
+import { AdminAlreadyExistsError } from '../errors/admin-already-exists-error';
+import { Admin } from '../models/admin';
 
 @Injectable()
 export class SignUpAdminService {
