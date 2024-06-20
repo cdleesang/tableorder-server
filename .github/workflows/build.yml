@@ -1,0 +1,72 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '21.7.1'
+          always-auth: true
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@oz-k'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.OZ_K_NPM_TOKEN }}
+
+      - name: Generate Prisma Client
+        run: yarn prisma:generate
+
+      - name: Build
+        run: yarn build
+
+      - name: Deploy to build branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INCLUDE_FILES: 'dist package.json yarn.lock'
+        run: |
+          mkdir -p ~/.tmp
+          
+          for file in $INCLUDE_FILES; do
+            mv $file ~/.tmp
+          done
+
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+          git fetch
+
+          : # build 브랜치가 없는 경우 생성
+          if git show-ref --quiet refs/remotes/origin/build; then
+            git checkout build
+          else
+            git checkout --orphan build
+          fi
+
+          : # .git을 제외한 모든 파일 삭제
+          find . -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+          mv ~/.tmp/* .
+
+          : # 변경사항이 있는 경우에만 commit & push
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git add .
+            git commit -m "Build $GITHUB_SHA"
+            git push origin build
+          else
+            echo "No changes to commit."
+          fi
