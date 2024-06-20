@@ -22,12 +22,11 @@ jobs:
           always-auth: true
           registry-url: 'https://registry.npmjs.org'
           scope: '@oz-k'
+          token: ${{ secrets.OZ_K_NPM_TOKEN }}
           cache: 'yarn'
-
+      
       - name: Install dependencies
         run: yarn --frozen-lockfile
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.OZ_K_NPM_TOKEN }}
 
       - name: Generate Prisma Client
         run: yarn prisma:generate
