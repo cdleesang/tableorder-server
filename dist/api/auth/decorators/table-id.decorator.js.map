@@ -1,0 +1,1 @@
+{"version":3,"file":"table-id.decorator.js","sourceRoot":"","sources":["../../../../src/api/auth/decorators/table-id.decorator.ts"],"names":[],"mappings":";;;AAAA,2CAAwE;AAG3D,QAAA,OAAO,GAAG,IAAA,6BAAoB,EAAC,CAAC,CAAC,EAAE,GAAqB,EAAE,EAAE;IACvE,MAAM,OAAO,GAAG,GAAG,CAAC,YAAY,EAAE,CAAC,UAAU,EAAkB,CAAC;IAEhE,OAAO,OAAO,CAAC,OAAO,CAAC;AACzB,CAAC,CAAC,CAAC"}
