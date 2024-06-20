@@ -19,11 +19,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '21.7.1'
-          always-auth: true
-          registry-url: 'https://registry.npmjs.org'
-          scope: '@oz-k'
-          token: ${{ secrets.OZ_K_NPM_TOKEN }}
           cache: 'yarn'
+        
+      - run: |
+          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+          echo "@oz-k:registry=https://registry.npmjs.org" >> ~/.npmrc
       
       - name: Install dependencies
         run: yarn --frozen-lockfile
