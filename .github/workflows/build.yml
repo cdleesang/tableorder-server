@@ -38,7 +38,7 @@ jobs:
       - name: Deploy to build branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          INCLUDE_FILES: 'dist package.json yarn.lock'
+          INCLUDE_FILES: 'dist bin prisma package.json yarn.lock pm2-ecosystem.config.js'
         run: |
           mkdir -p ~/.tmp
           
