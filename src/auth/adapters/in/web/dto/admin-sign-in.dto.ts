@@ -1,4 +1,4 @@
-export interface SignInAdminRequestDto {
+export interface AdminSignInRequestDto {
   /** 로그인 아이디 */
   signInId: string;
 
@@ -6,7 +6,7 @@ export interface SignInAdminRequestDto {
   password: string;
 }
 
-export interface SignInAdminResponseDto {
+export interface AdminSignInResponseDto {
   /** 액세스 토큰 */
   accessToken: string;
 

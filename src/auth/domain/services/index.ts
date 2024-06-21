@@ -5,3 +5,5 @@ export * from './can-admin-access.service';
 export * from './update-admin-permissions.service';
 export * from './view-admin-permissions.service';
 export * from './table-paring.service';
+export * from './admin-sign-out-all.service';
+export * from './admin-sign-out.service';

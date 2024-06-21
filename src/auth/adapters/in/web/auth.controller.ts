@@ -2,23 +2,19 @@ import { TypedBody, TypedParam, TypedQuery, TypedRoute } from '@nestia/core';
 import { Controller } from '@nestjs/common';
 import { AdminAuthority } from 'src/auth/domain/models/admin-authority';
 import { AdminPermission } from 'src/auth/domain/models/admin-permission';
-import { AdminRenewTokenService, AdminSignInService, TableParingService, UpdateAdminPermissionsService, ViewAdminPermissionsService } from 'src/auth/domain/services';
-import { CurrentAdmin } from 'src/auth/utils/decorators/current-admin.decorator';
-import { UseAdminGuard } from 'src/auth/utils/decorators/use-admin-guard.decorator';
-import { UseAdminPermissionDeniedExceptionFilter } from 'src/auth/utils/filters/admin-permission-denied-exception.filter';
+import { AdminRenewTokenService, AdminSignInService, AdminSignOutAllService, AdminSignOutService, TableParingService, UpdateAdminPermissionsService, ViewAdminPermissionsService } from 'src/auth/domain/services';
+import { CurrentAdmin, UseAdminGuard, UseAdminPermissionDeniedExceptionFilter } from 'src/auth/utils';
 import typia from 'typia';
-import { SignInAdminRequestDto, SignInAdminResponseDto, UpdateAdminPermissionsRequestDto } from './dto';
-import { UseAdminSignInExceptionFilter } from './filters';
-import { UseParingTableExceptionFilter } from './filters/paring-table-exception.filter';
-import { UseUpdateAdminPermissionsExceptionFilter } from './filters/update-admin-permissions-exception.filter';
-import { RenewTokenRequestDto, RenewTokenResponseDto } from './dto/renew-token.dto';
-import { UseAdminRenewTokenExceptionFilter } from './filters/admin-renew-token-exception.filter';
+import { AdminSignInRequestDto, AdminSignInResponseDto, AdminSignOutRequestDto, RenewTokenRequestDto, RenewTokenResponseDto, UpdateAdminPermissionsRequestDto } from './dto';
+import { UseAdminRenewTokenExceptionFilter, UseAdminSignInExceptionFilter, UseParingTableExceptionFilter, UseUpdateAdminPermissionsExceptionFilter } from './filters';
 
 @Controller({path: 'auth', version: 'api'})
 export class AuthController {
   constructor(
     private readonly adminSignInService: AdminSignInService,
     private readonly renewTokenService: AdminRenewTokenService,
+    private readonly adminSignOutService: AdminSignOutService,
+    private readonly adminSignOutAllService: AdminSignOutAllService,
     private readonly viewAdminPermissionsService: ViewAdminPermissionsService,
     private readonly updateAdminPermissionsService: UpdateAdminPermissionsService,
     private readonly tableParingService: TableParingService,
@@ -31,7 +27,7 @@ export class AuthController {
    */
   @TypedRoute.Post('/admin/sign-in')
   @UseAdminSignInExceptionFilter()
-  adminSignIn(@TypedBody() body: SignInAdminRequestDto): Promise<SignInAdminResponseDto> {
+  adminSignIn(@TypedBody() body: AdminSignInRequestDto): Promise<AdminSignInResponseDto> {
     return this.adminSignInService.execute(body.signInId, body.password);
   }
 
@@ -44,6 +40,30 @@ export class AuthController {
   @UseAdminRenewTokenExceptionFilter()
   adminRenewToken(@TypedQuery() query: RenewTokenRequestDto): Promise<RenewTokenResponseDto> {
     return this.renewTokenService.execute(query.refreshToken);
+  }
+
+  /**
+   * 관리자 로그아웃.
+   * 
+   * @tag 인증
+   * @security admin
+   */
+  @TypedRoute.Post('/admin/sign-out')
+  @UseAdminGuard()
+  adminSignOut(@CurrentAdmin() authority: AdminAuthority, @TypedBody() body: AdminSignOutRequestDto): Promise<void> {
+    return this.adminSignOutService.execute(authority, body.refreshToken);
+  }
+
+  /**
+   * 관리자 모든 디바이스 로그아웃.
+   * 
+   * @tag 인증
+   * @security admin
+   */
+  @TypedRoute.Post('/admin/sign-out/all')
+  @UseAdminGuard()
+  adminSignOutAll(@CurrentAdmin() authority: AdminAuthority): Promise<void> {
+    return this.adminSignOutAllService.execute(authority);
   }
 
   /**
