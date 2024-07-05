@@ -1,0 +1,1 @@
+export const OPTION_INJECT_KEY = Symbol('FirebirdModuleOptions');
