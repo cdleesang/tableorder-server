@@ -7,6 +7,7 @@ import { CurrentAdmin, UseAdminGuard, UseAdminPermissionDeniedExceptionFilter } 
 import typia from 'typia';
 import { AdminSignInRequestDto, AdminSignInResponseDto, AdminSignOutRequestDto, RenewTokenRequestDto, RenewTokenResponseDto, UpdateAdminPermissionsRequestDto } from './dto';
 import { UseAdminRenewTokenExceptionFilter, UseAdminSignInExceptionFilter, UseParingTableExceptionFilter, UseUpdateAdminPermissionsExceptionFilter } from './filters';
+import { UseAdminSignOutExceptionFilter } from './filters/admin-sign-out-exception.filter';
 
 @Controller({path: 'auth', version: 'api'})
 export class AuthController {
@@ -50,6 +51,7 @@ export class AuthController {
    */
   @TypedRoute.Post('/admin/sign-out')
   @UseAdminGuard()
+  @UseAdminSignOutExceptionFilter()
   adminSignOut(@CurrentAdmin() authority: AdminAuthority, @TypedBody() body: AdminSignOutRequestDto): Promise<void> {
     return this.adminSignOutService.execute(authority, body.refreshToken);
   }

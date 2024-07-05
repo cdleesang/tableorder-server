@@ -12,6 +12,10 @@ export class FirebirdService implements OnModuleInit, OnModuleDestroy {
   ) {}
 
   async onModuleInit() {
+    await this.connect();
+  }
+
+  private async connect() {
     this.db = await (async () => {
       const TIMEOUT = 5000;
 
@@ -128,15 +132,23 @@ export class FirebirdService implements OnModuleInit, OnModuleDestroy {
 
   async rawQuery(query: string, params: any[] = []): Promise<Record<string, any>[]> {
     return new Promise((resolve, reject) => {
-      this.db.query(
-        query,
-        params,
-        (err, result) => {
-          if(err) return reject(err);
-
-          return resolve(result);
-        },
-      );
+      try {
+        this.db.query(
+          query,
+          params,
+          (err, result) => {
+            if(err) {
+              console.log('Firebird Raw Query Error', err);
+              return reject(err);
+            }
+  
+            return resolve(result);
+          },
+        );
+      } catch(error) {
+        console.log('Firebird Raw Query Exception', error);
+        throw new Error('Database query failed');
+      }
     });
   }
 
