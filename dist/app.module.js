@@ -10,14 +10,18 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const serve_static_1 = require("@nestjs/serve-static");
 const path_1 = require("path");
-const call_staff_module_1 = require("./api/call-staff/call-staff.module");
-const cart_module_1 = require("./api/cart/cart.module");
-const menu_module_1 = require("./api/menu/menu.module");
-const notification_module_1 = require("./api/notification/notification.module");
-const order_module_1 = require("./api/order/order.module");
-const store_module_1 = require("./api/store/store.module");
+const call_staff_module_1 = require("./v1/call-staff/call-staff.module");
+const cart_module_1 = require("./v1/cart/cart.module");
+const menu_module_1 = require("./v1/menu/menu.module");
+const notification_module_1 = require("./v1/notification/notification.module");
+const order_module_1 = require("./v1/order/order.module");
+const order_module_2 = require("./order/order.module");
+const store_module_1 = require("./v1/store/store.module");
 const config_module_1 = require("./config/config.module");
-const prisma_module_1 = require("./providers/prisma/prisma.module");
+const prisma_module_1 = require("./common/modules/prisma/prisma.module");
+const admin_module_1 = require("./admin/admin.module");
+const table_module_1 = require("./table/table.module");
+const auth_module_1 = require("./auth/auth.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -29,6 +33,10 @@ exports.AppModule = AppModule = __decorate([
             }),
             prisma_module_1.PrismaModule,
             config_module_1.ConfigModule,
+            admin_module_1.AdminModule,
+            table_module_1.TableModule,
+            order_module_2.OrderModule,
+            auth_module_1.AuthModule,
             call_staff_module_1.CallStaffModule,
             menu_module_1.MenuModule,
             cart_module_1.CartModule,

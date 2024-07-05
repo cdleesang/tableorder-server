@@ -1,0 +1,1 @@
+export declare const UseUpdateAdminPermissionsExceptionFilter: () => <TFunction extends Function, Y>(target: object | TFunction, propertyKey?: string | symbol | undefined, descriptor?: TypedPropertyDescriptor<Y> | undefined) => void;

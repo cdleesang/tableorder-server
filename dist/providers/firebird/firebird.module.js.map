@@ -1,1 +1,0 @@
-{"version":3,"file":"firebird.module.js","sourceRoot":"","sources":["../../../src/providers/firebird/firebird.module.ts"],"names":[],"mappings":";;;;;;;;;AAAA,2CAAwC;AACxC,yDAAqD;AAU9C,IAAM,cAAc,GAApB,MAAM,cAAc;CAAG,CAAA;AAAjB,wCAAc;yBAAd,cAAc;IAR1B,IAAA,eAAM,EAAC;QACN,SAAS,EAAE;YACT,kCAAe;SAChB;QACD,OAAO,EAAE;YACP,kCAAe;SAChB;KACF,CAAC;GACW,cAAc,CAAG"}

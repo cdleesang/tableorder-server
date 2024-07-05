@@ -1,0 +1,1 @@
+{"version":3,"file":"database.error.js","sourceRoot":"","sources":["../../../../../src/common/modules/prisma/errors/database.error.ts"],"names":[],"mappings":";;;AAQA,MAAa,aAAc,SAAQ,KAAK;IACnB;IAAnB,YAAmB,WAAyB;QAC1C,KAAK,CAAC,gBAAgB,CAAC,CAAC;QADP,gBAAW,GAAX,WAAW,CAAc;IAE5C,CAAC;CACF;AAJD,sCAIC"}

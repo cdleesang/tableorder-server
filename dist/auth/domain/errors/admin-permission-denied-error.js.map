@@ -1,0 +1,1 @@
+{"version":3,"file":"admin-permission-denied-error.js","sourceRoot":"","sources":["../../../../src/auth/domain/errors/admin-permission-denied-error.ts"],"names":[],"mappings":";;;AAAA,MAAa,0BAA2B,SAAQ,KAAK;IACnD;QACE,KAAK,CAAC,mBAAmB,CAAC,CAAC;IAC7B,CAAC;CACF;AAJD,gEAIC"}

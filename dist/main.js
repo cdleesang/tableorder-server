@@ -16,9 +16,13 @@ async function bootstrap() {
         const swaggerPath = (0, path_1.join)(process.cwd(), 'dist', 'swagger.json');
         if ((0, fs_1.existsSync)(swaggerPath)) {
             const document = JSON.parse((0, fs_1.readFileSync)(swaggerPath).toString('utf-8'));
-            swagger_1.SwaggerModule.setup('docs', app, document);
+            swagger_1.SwaggerModule.setup('api/docs', app, document);
         }
     }
+    app.enableVersioning({
+        type: common_1.VersioningType.URI,
+        prefix: false,
+    });
     await app.listen(PORT, () => {
         process.send?.('ready');
         common_1.Logger.verbose(`테이블 오더 동작 중... 포트: ${PORT}`, 'Bootstrap');

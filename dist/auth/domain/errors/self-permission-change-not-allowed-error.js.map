@@ -1,0 +1,1 @@
+{"version":3,"file":"self-permission-change-not-allowed-error.js","sourceRoot":"","sources":["../../../../src/auth/domain/errors/self-permission-change-not-allowed-error.ts"],"names":[],"mappings":";;;AAAA,MAAa,mCAAoC,SAAQ,KAAK;IAC5D;QACE,KAAK,CAAC,oCAAoC,CAAC,CAAC;IAC9C,CAAC;CACF;AAJD,kFAIC"}
