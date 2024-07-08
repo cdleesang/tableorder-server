@@ -5,16 +5,19 @@ import { AdminPermission } from 'src/auth/domain/models/admin-permission';
 import { CanAdminAccessService } from 'src/auth/domain/services';
 import { TableOrderHistoryRepository } from 'src/order/ports/out/order-history-repository';
 
-type Response = Array<{
-  tableId: string;
-  tableName: string;
-  totalPrice: number;
-  menus: {
-    name: string;
-    price: number;
-    quantity: number;
-  }[];
-}>;
+type Response = {
+  totalSalesRevenue: number;
+  orderHistories: Array<{
+    tableId: string;
+    tableName: string;
+    totalPrice: number;
+    menus: {
+      name: string;
+      price: number;
+      quantity: number;
+    }[];
+  }>
+};
 
 @Injectable()
 export class ViewAllOrderHistoriesService {
@@ -33,6 +36,111 @@ export class ViewAllOrderHistoriesService {
       throw new AdminPermissionDeniedError();
     }
 
-    return this.tableOrderHistoryRepository.findAll();
+    const [totalSalesRevenue, orderHistories] = await Promise.all([
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.totalSalesRevenue(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+      this.tableOrderHistoryRepository.findAll(),
+    ]);
+
+    return { totalSalesRevenue, orderHistories };
   }
 }

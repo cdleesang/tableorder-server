@@ -16,50 +16,76 @@ export class TableOrderHistoryRepositoryImpl extends BasePosRepository<HTableEnt
   }
 
   async findAll(): Promise<OrderHistory[]> {
-    const rows = await this.rawQuery(`
-      SELECT
-        t.STOCKCODE,
-        t.STOCKNAME,
-        t.DANGA,
-        t.QTY,
-        t.OTIME,
-        tnm.POSNO,
-        tnm.ISEQ,
-        tnm.TNAME
-      FROM
-        HTABLE t
-      JOIN
-        HTABLE_NM tnm ON t.TABLENO = tnm.ISEQ
-                        AND t.POSNO = tnm.POSNO
-      ORDER BY
-        t.OTIME asc
-    `) as Array<{
-      STOCKCODE: string;
-      STOCKNAME: string;
-      DANGA: number;
-      QTY: number;
-      OTIME: string;
-      POSNO: number;
-      ISEQ: number;
-      TNAME: string;
-    }>;
-
-    return rows
-      .reduce((acc, row) => {
-        const tableId = this.generateTableId(row.POSNO, row.ISEQ);
-        const menu = new Menu(row.STOCKCODE!, row.STOCKNAME!, row.DANGA!, row.QTY!, transformOrderTime(row.OTIME!));
-        const existingTable = acc.find(order => order.tableId === tableId)
-          ?? new OrderHistory(tableId, row.TNAME, []);
-
-        existingTable.addMenu(menu);
-
-        return acc.filter(history => history.tableId !== tableId).concat(existingTable);
-      }, [] as OrderHistory[])
-      .sort((a, b) => b.tableId.localeCompare(a.tableId));
+    try {
+      const rows = await this.rawQuery(`
+        SELECT
+          t.STOCKCODE,
+          t.STOCKNAME,
+          t.DANGA,
+          t.QTY,
+          t.OTIME,
+          tnm.POSNO,
+          tnm.ISEQ,
+          tnm.TNAME
+        FROM
+          HTABLE t
+        JOIN
+          HTABLE_NM tnm ON t.TABLENO = tnm.ISEQ
+                          AND t.POSNO = tnm.POSNO
+        ORDER BY
+          t.OTIME asc
+      `) as Array<{
+        STOCKCODE: string;
+        STOCKNAME: string;
+        DANGA: number;
+        QTY: number;
+        OTIME: string;
+        POSNO: number;
+        ISEQ: number;
+        TNAME: string;
+      }>;
+  
+      return rows
+        .reduce((acc, row) => {
+          const tableId = this.generateTableId(row.POSNO, row.ISEQ);
+          const menu = new Menu(row.STOCKCODE!, row.STOCKNAME!, row.DANGA!, row.QTY!, transformOrderTime(row.OTIME!));
+          const existingTable = acc.find(order => order.tableId === tableId)
+            ?? new OrderHistory(tableId, row.TNAME, []);
+  
+          existingTable.addMenu(menu);
+  
+          return acc.filter(history => history.tableId !== tableId).concat(existingTable);
+        }, [] as OrderHistory[])
+        .sort((a, b) => b.tableId.localeCompare(a.tableId));
+    } catch(err) {
+      console.error('TableOrderHistoryRepositoryImpl.findAll', err);
+      return [];
+    }
   }
 
   async findByTableId(tableId: string): Promise<OrderHistory | null> {
-    return (await this.findAll()).find(order => order.tableId === tableId) || null;
+    try {
+      return (await this.findAll()).find(order => order.tableId === tableId) || null;
+    } catch(err) {
+      console.error('TableOrderHistoryRepositoryImpl.findByTableId', err);
+      return null;
+    }
+  }
+
+  async totalSalesRevenue(): Promise<number> {
+    try {
+      const rows = await this.rawQuery(`
+        SELECT
+          SUM(TOTALAMT) AS TOTALAMT
+        FROM
+          HSALETOTAL
+      `) as Array<{TOTALAMT: number | null}>;
+  
+      return rows[0].TOTALAMT ?? 0;
+    } catch(err) {
+      console.error('TableOrderHistoryRepositoryImpl.totalSalesRevenue', err);
+      return 0;
+    }
   }
 
   private generateTableId(posNo: number, seq: number): string {
