@@ -21,4 +21,10 @@ interface OrderHistory {
   }[];
 }
 
-export type GetAllOrderHistoriesResponseDto = OrderHistory[];
+export interface GetAllOrderHistoriesResponseDto {
+  /** 총 매출액 */
+  totalSalesRevenue: number;
+
+  /** 주문 이력들 */
+  orderHistories: OrderHistory[];
+}

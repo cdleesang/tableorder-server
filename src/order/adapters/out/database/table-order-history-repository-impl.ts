@@ -43,7 +43,7 @@ export class TableOrderHistoryRepositoryImpl extends BasePosRepository<HTableEnt
       ISEQ: number;
       TNAME: string;
     }>;
-
+  
     return rows
       .reduce((acc, row) => {
         const tableId = this.generateTableId(row.POSNO, row.ISEQ);
@@ -60,6 +60,17 @@ export class TableOrderHistoryRepositoryImpl extends BasePosRepository<HTableEnt
 
   async findByTableId(tableId: string): Promise<OrderHistory | null> {
     return (await this.findAll()).find(order => order.tableId === tableId) || null;
+  }
+
+  async totalSalesRevenue(): Promise<number> {
+    const rows = await this.rawQuery(`
+      SELECT
+        SUM(TOTALAMT) AS TOTALAMT
+      FROM
+        HSALETOTAL
+    `) as Array<{TOTALAMT: number | null}>;
+
+    return rows[0].TOTALAMT ?? 0;
   }
 
   private generateTableId(posNo: number, seq: number): string {
