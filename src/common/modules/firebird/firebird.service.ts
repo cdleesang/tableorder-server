@@ -109,7 +109,7 @@ export class FirebirdService implements OnModuleInit, OnModuleDestroy {
           );
         });
       }),
-      5000,
+      10000,
       'Database query timeout',
     );
   }
@@ -129,7 +129,7 @@ export class FirebirdService implements OnModuleInit, OnModuleDestroy {
           );
         });
       }),
-      5000,
+      10000,
       'Database query timeout',
     );
   }
