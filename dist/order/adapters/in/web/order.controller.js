@@ -42,14 +42,36 @@ exports.OrderController = OrderController;
 __decorate([
     core_1.TypedRoute.Get('history', { type: "assert", assert: (input, errorFactory) => { const assert = (input, errorFactory) => {
             const __is = input => {
-                const $io0 = input => "string" === typeof input.tableId && "string" === typeof input.tableName && ("number" === typeof input.totalPrice && !Number.isNaN(input.totalPrice)) && (Array.isArray(input.menus) && input.menus.every(elem => "object" === typeof elem && null !== elem && $io1(elem)));
-                const $io1 = input => "string" === typeof input.name && ("number" === typeof input.price && !Number.isNaN(input.price)) && ("number" === typeof input.quantity && !Number.isNaN(input.quantity));
-                return Array.isArray(input) && input.every(elem => "object" === typeof elem && null !== elem && $io0(elem));
+                const $io0 = input => "number" === typeof input.totalSalesRevenue && !Number.isNaN(input.totalSalesRevenue) && (Array.isArray(input.orderHistories) && input.orderHistories.every(elem => "object" === typeof elem && null !== elem && $io1(elem)));
+                const $io1 = input => "string" === typeof input.tableId && "string" === typeof input.tableName && ("number" === typeof input.totalPrice && !Number.isNaN(input.totalPrice)) && (Array.isArray(input.menus) && input.menus.every(elem => "object" === typeof elem && null !== elem && $io2(elem)));
+                const $io2 = input => "string" === typeof input.name && ("number" === typeof input.price && !Number.isNaN(input.price)) && ("number" === typeof input.quantity && !Number.isNaN(input.quantity));
+                return "object" === typeof input && null !== input && $io0(input);
             };
             if (false === __is(input))
                 ((input, _path, _exceptionable = true) => {
                     const $guard = core_1.TypedRoute.Get.guard;
-                    const $ao0 = (input, _path, _exceptionable = true) => ("string" === typeof input.tableId || $guard(_exceptionable, {
+                    const $ao0 = (input, _path, _exceptionable = true) => ("number" === typeof input.totalSalesRevenue && !Number.isNaN(input.totalSalesRevenue) || $guard(_exceptionable, {
+                        path: _path + ".totalSalesRevenue",
+                        expected: "number",
+                        value: input.totalSalesRevenue
+                    }, errorFactory)) && ((Array.isArray(input.orderHistories) || $guard(_exceptionable, {
+                        path: _path + ".orderHistories",
+                        expected: "Array<OrderHistory>",
+                        value: input.orderHistories
+                    }, errorFactory)) && input.orderHistories.every((elem, _index1) => ("object" === typeof elem && null !== elem || $guard(_exceptionable, {
+                        path: _path + ".orderHistories[" + _index1 + "]",
+                        expected: "OrderHistory",
+                        value: elem
+                    }, errorFactory)) && $ao1(elem, _path + ".orderHistories[" + _index1 + "]", true && _exceptionable) || $guard(_exceptionable, {
+                        path: _path + ".orderHistories[" + _index1 + "]",
+                        expected: "OrderHistory",
+                        value: elem
+                    }, errorFactory)) || $guard(_exceptionable, {
+                        path: _path + ".orderHistories",
+                        expected: "Array<OrderHistory>",
+                        value: input.orderHistories
+                    }, errorFactory));
+                    const $ao1 = (input, _path, _exceptionable = true) => ("string" === typeof input.tableId || $guard(_exceptionable, {
                         path: _path + ".tableId",
                         expected: "string",
                         value: input.tableId
@@ -69,7 +91,7 @@ __decorate([
                         path: _path + ".menus[" + _index2 + "]",
                         expected: "__type",
                         value: elem
-                    }, errorFactory)) && $ao1(elem, _path + ".menus[" + _index2 + "]", true && _exceptionable) || $guard(_exceptionable, {
+                    }, errorFactory)) && $ao2(elem, _path + ".menus[" + _index2 + "]", true && _exceptionable) || $guard(_exceptionable, {
                         path: _path + ".menus[" + _index2 + "]",
                         expected: "__type",
                         value: elem
@@ -78,7 +100,7 @@ __decorate([
                         expected: "Array<__type>",
                         value: input.menus
                     }, errorFactory));
-                    const $ao1 = (input, _path, _exceptionable = true) => ("string" === typeof input.name || $guard(_exceptionable, {
+                    const $ao2 = (input, _path, _exceptionable = true) => ("string" === typeof input.name || $guard(_exceptionable, {
                         path: _path + ".name",
                         expected: "string",
                         value: input.name
@@ -91,19 +113,11 @@ __decorate([
                         expected: "number",
                         value: input.quantity
                     }, errorFactory));
-                    return (Array.isArray(input) || $guard(true, {
+                    return ("object" === typeof input && null !== input || $guard(true, {
                         path: _path + "",
                         expected: "GetAllOrderHistoriesResponseDto",
                         value: input
-                    }, errorFactory)) && input.every((elem, _index1) => ("object" === typeof elem && null !== elem || $guard(true, {
-                        path: _path + "[" + _index1 + "]",
-                        expected: "OrderHistory",
-                        value: elem
-                    }, errorFactory)) && $ao0(elem, _path + "[" + _index1 + "]", true) || $guard(true, {
-                        path: _path + "[" + _index1 + "]",
-                        expected: "OrderHistory",
-                        value: elem
-                    }, errorFactory)) || $guard(true, {
+                    }, errorFactory)) && $ao0(input, _path + "", true) || $guard(true, {
                         path: _path + "",
                         expected: "GetAllOrderHistoriesResponseDto",
                         value: input
@@ -111,10 +125,12 @@ __decorate([
                 })(input, "$input", true);
             return input;
         }; const stringify = input => {
-            const $io1 = input => "string" === typeof input.name && "number" === typeof input.price && "number" === typeof input.quantity;
+            const $io1 = input => "string" === typeof input.tableId && "string" === typeof input.tableName && "number" === typeof input.totalPrice && (Array.isArray(input.menus) && input.menus.every(elem => "object" === typeof elem && null !== elem && $io2(elem)));
+            const $io2 = input => "string" === typeof input.name && "number" === typeof input.price && "number" === typeof input.quantity;
             const $string = core_1.TypedRoute.Get.string;
-            const $so0 = input => `{"tableId":${$string(input.tableId)},"tableName":${$string(input.tableName)},"totalPrice":${input.totalPrice},"menus":${`[${input.menus.map(elem => `{"name":${$string(elem.name)},"price":${elem.price},"quantity":${elem.quantity}}`).join(",")}]`}}`;
-            return `[${input.map(elem => $so0(elem)).join(",")}]`;
+            const $so0 = input => `{"totalSalesRevenue":${input.totalSalesRevenue},"orderHistories":${`[${input.orderHistories.map(elem => $so1(elem)).join(",")}]`}}`;
+            const $so1 = input => `{"tableId":${$string(input.tableId)},"tableName":${$string(input.tableName)},"totalPrice":${input.totalPrice},"menus":${`[${input.menus.map(elem => `{"name":${$string(elem.name)},"price":${elem.price},"quantity":${elem.quantity}}`).join(",")}]`}}`;
+            return $so0(input);
         }; return stringify(assert(input, errorFactory)); } }),
     (0, use_admin_guard_decorator_1.UseAdminGuard)(),
     (0, admin_permission_denied_exception_filter_1.UseAdminPermissionDeniedExceptionFilter)(),

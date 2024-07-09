@@ -8,5 +8,8 @@ interface OrderHistory {
         quantity: number;
     }[];
 }
-export type GetAllOrderHistoriesResponseDto = OrderHistory[];
+export interface GetAllOrderHistoriesResponseDto {
+    totalSalesRevenue: number;
+    orderHistories: OrderHistory[];
+}
 export {};

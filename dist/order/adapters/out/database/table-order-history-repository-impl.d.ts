@@ -7,5 +7,6 @@ export declare class TableOrderHistoryRepositoryImpl extends BasePosRepository<H
     constructor(firebirdService: FirebirdService);
     findAll(): Promise<OrderHistory[]>;
     findByTableId(tableId: string): Promise<OrderHistory | null>;
+    totalSalesRevenue(): Promise<number>;
     private generateTableId;
 }

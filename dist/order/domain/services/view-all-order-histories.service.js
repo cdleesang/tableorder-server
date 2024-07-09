@@ -30,7 +30,11 @@ let ViewAllOrderHistoriesService = class ViewAllOrderHistoriesService {
         if (!isAccessible) {
             throw new admin_permission_denied_error_1.AdminPermissionDeniedError();
         }
-        return this.tableOrderHistoryRepository.findAll();
+        const [totalSalesRevenue, orderHistories] = await Promise.all([
+            this.tableOrderHistoryRepository.totalSalesRevenue(),
+            this.tableOrderHistoryRepository.findAll(),
+        ]);
+        return { totalSalesRevenue, orderHistories };
     }
 };
 exports.ViewAllOrderHistoriesService = ViewAllOrderHistoriesService;

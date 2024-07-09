@@ -2,10 +2,9 @@ import { OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import type { FireBirdOptions } from './types/fire-bird-options.type';
 export declare class FirebirdService implements OnModuleInit, OnModuleDestroy {
     private readonly options;
-    private db;
+    private pool;
     constructor(options: FireBirdOptions);
     onModuleInit(): Promise<void>;
-    private connect;
     findFirst(table: string, options: {
         select?: Record<string, true>;
         where?: Record<string, {
@@ -32,4 +31,6 @@ export declare class FirebirdService implements OnModuleInit, OnModuleDestroy {
     }): Promise<Record<string, any>[]>;
     rawQuery(query: string, params?: any[]): Promise<Record<string, any>[]>;
     onModuleDestroy(): Promise<void>;
+    private getConnection;
+    private timeout;
 }

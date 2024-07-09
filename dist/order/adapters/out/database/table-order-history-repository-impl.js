@@ -54,6 +54,15 @@ let TableOrderHistoryRepositoryImpl = class TableOrderHistoryRepositoryImpl exte
     async findByTableId(tableId) {
         return (await this.findAll()).find(order => order.tableId === tableId) || null;
     }
+    async totalSalesRevenue() {
+        const rows = await this.rawQuery(`
+      SELECT
+        SUM(TOTALAMT) AS TOTALAMT
+      FROM
+        HSALETOTAL
+    `);
+        return rows[0].TOTALAMT ?? 0;
+    }
     generateTableId(posNo, seq) {
         return `${posNo}_${seq}`;
     }

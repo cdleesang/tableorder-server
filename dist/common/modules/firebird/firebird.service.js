@@ -18,37 +18,19 @@ const Firebird = require("@oz-k/node-firebird-cp949");
 const option_inject_key_constant_1 = require("./constants/option-inject-key.constant");
 let FirebirdService = class FirebirdService {
     options;
-    db;
+    pool;
     constructor(options) {
         this.options = options;
     }
     async onModuleInit() {
-        await this.connect();
-    }
-    async connect() {
-        this.db = await (async () => {
-            const TIMEOUT = 5000;
-            const timeout = setTimeout(() => {
-                throw new Error('Database connection timeout');
-            }, TIMEOUT);
-            return new Promise((resolve, reject) => {
-                Firebird.attach({
-                    host: this.options.host,
-                    port: this.options.port,
-                    database: this.options.database,
-                    user: this.options.user,
-                    password: this.options.password,
-                    encoding: 'NONE',
-                }, (err, db) => {
-                    clearTimeout(timeout);
-                    if (err)
-                        return reject(err);
-                    if (!db)
-                        return reject(new Error('Database connection failed'));
-                    return resolve(db);
-                });
-            });
-        })();
+        this.pool = Firebird.pool(5, {
+            host: this.options.host,
+            port: this.options.port,
+            database: this.options.database,
+            user: this.options.user,
+            password: this.options.password,
+            encoding: 'NONE',
+        });
     }
     async findFirst(table, options) {
         return (await this.findMany(table, {
@@ -57,84 +39,98 @@ let FirebirdService = class FirebirdService {
         }))?.[0];
     }
     async findMany(table, options) {
-        return new Promise((resolve, reject) => {
-            const { select, where, offset, limit, orderBy } = options;
-            const selectFields = select ? Object.keys(select).join(', ') : '*';
-            const whereFields = where ? Object.keys(where).map(key => {
-                const { type, value } = where[key];
-                let operator;
-                if (value === null) {
-                    if (type === 'eq')
-                        return `${key} IS NULL`;
-                    if (type === 'ne')
-                        return `${key} IS NOT NULL`;
-                    throw new Error('Invalid where condition');
-                }
-                else {
-                    switch (type) {
-                        case 'eq':
-                            operator = '=';
-                            break;
-                        case 'ne':
-                            operator = '<>';
-                            break;
-                        case 'gt':
-                            operator = '>';
-                            break;
-                        case 'gte':
-                            operator = '>=';
-                            break;
-                        case 'lt':
-                            operator = '<';
-                            break;
-                        case 'lte':
-                            operator = '<=';
-                            break;
-                        default:
-                            throw new Error('Invalid where condition');
+        return this.timeout(this.getConnection(db => {
+            return new Promise((resolve, reject) => {
+                const { select, where, offset, limit, orderBy } = options;
+                const selectFields = select ? Object.keys(select).join(', ') : '*';
+                const whereFields = where ? Object.keys(where).map(key => {
+                    const { type, value } = where[key];
+                    let operator;
+                    if (value === null) {
+                        if (type === 'eq')
+                            return `${key} IS NULL`;
+                        if (type === 'ne')
+                            return `${key} IS NOT NULL`;
+                        throw new Error('Invalid where condition');
                     }
-                }
-                return `${key} ${operator} ?`;
-            }).join(' AND ') : '';
-            const orderFields = orderBy
-                ? orderBy.map(({ column, order }) => `${column} ${order}`).join(', ')
-                : '';
-            const query = `SELECT ${selectFields} `
-                + `FROM ${table}`
-                + `${whereFields ? ` WHERE ${whereFields}` : ''}`
-                + `${orderFields ? ` ORDER BY ${orderFields}` : ''}`
-                + `${limit ? ` ROWS ${limit}` : ''}`
-                + `${offset ? ` TO ${offset}` : ''}`;
-            this.db.query(query, where ? Object.values(where).map(({ value }) => value) : [], (err, result) => {
+                    else {
+                        switch (type) {
+                            case 'eq':
+                                operator = '=';
+                                break;
+                            case 'ne':
+                                operator = '<>';
+                                break;
+                            case 'gt':
+                                operator = '>';
+                                break;
+                            case 'gte':
+                                operator = '>=';
+                                break;
+                            case 'lt':
+                                operator = '<';
+                                break;
+                            case 'lte':
+                                operator = '<=';
+                                break;
+                            default:
+                                throw new Error('Invalid where condition');
+                        }
+                    }
+                    return `${key} ${operator} ?`;
+                }).join(' AND ') : '';
+                const orderFields = orderBy
+                    ? orderBy.map(({ column, order }) => `${column} ${order}`).join(', ')
+                    : '';
+                const query = `SELECT ${selectFields} `
+                    + `FROM ${table}`
+                    + `${whereFields ? ` WHERE ${whereFields}` : ''}`
+                    + `${orderFields ? ` ORDER BY ${orderFields}` : ''}`
+                    + `${limit ? ` ROWS ${limit}` : ''}`
+                    + `${offset ? ` TO ${offset}` : ''}`;
+                db.query(query, where ? Object.values(where).map(({ value }) => value) : [], (err, result) => {
+                    if (err)
+                        return reject(err);
+                    if (!result)
+                        return reject(new Error('Record not found'));
+                    return resolve(result);
+                });
+            });
+        }), 10000, 'Database query timeout');
+    }
+    rawQuery(query, params = []) {
+        return this.timeout(this.getConnection(db => {
+            return new Promise((resolve, reject) => {
+                db.query(query, params, (err, result) => {
+                    if (err)
+                        return reject(err);
+                    return resolve(result);
+                });
+            });
+        }), 10000, 'Database query timeout');
+    }
+    async onModuleDestroy() {
+        if (this.pool) {
+            this.pool.destroy();
+        }
+    }
+    getConnection(callback) {
+        return new Promise((resolve, reject) => {
+            this.pool.get((err, db) => {
                 if (err)
                     return reject(err);
-                if (!result)
-                    return reject(new Error('Record not found'));
-                return resolve(result);
+                return callback(db).then(result => {
+                    db.detach();
+                    resolve(result);
+                }).catch(reject);
             });
         });
     }
-    async rawQuery(query, params = []) {
-        return new Promise((resolve, reject) => {
-            try {
-                this.db.query(query, params, (err, result) => {
-                    if (err) {
-                        console.log('Firebird Raw Query Error', err);
-                        return reject(err);
-                    }
-                    return resolve(result);
-                });
-            }
-            catch (error) {
-                console.log('Firebird Raw Query Exception', error);
-                throw new Error('Database query failed');
-            }
-        });
-    }
-    async onModuleDestroy() {
-        if (this.db) {
-            this.db.detach();
-        }
+    timeout(promise, ms, message) {
+        return Promise.race([
+            promise,
+            new Promise((_, reject) => { setTimeout(() => reject(new Error(message ?? 'Promise timeout')), ms); }),
+        ]);
     }
 };
 exports.FirebirdService = FirebirdService;
