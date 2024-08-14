@@ -1,6 +1,19 @@
 import { getTransform } from './decorators/transform.decorator';
-import { FirebirdService } from './firebird.service';
+import { FirebirdService } from '../firebird/firebird.service';
 import { getColumnName } from './decorators/column.decorator';
+
+interface FindOneOptions<T extends Record<string, any>, S extends keyof T> {
+  select?: Partial<Record<S, true>>;
+  where?: Partial<{
+    [K in keyof T]: {
+      type: 'eq' | 'ne' | 'gte' | 'gt' | 'lt' | 'lte';
+      value: T[K] | null;
+    }
+  }>;
+  orderBy?: {column: keyof T, order: 'asc' | 'desc'}[];
+  offset?: number;
+  limit?: number;
+}
 
 export abstract class BasePosRepository<T extends Record<string, any>> {
   constructor(
@@ -9,18 +22,7 @@ export abstract class BasePosRepository<T extends Record<string, any>> {
     private readonly firebirdService: FirebirdService,
   ) {}
 
-  async findFirst<S extends keyof T>(
-    options: {
-      select?: Record<S, true>,
-      where?: Partial<{
-        [K in keyof T]: {
-          type: 'eq' | 'ne' | 'gte' | 'gt' | 'lt' | 'lte';
-          value: T[K] | null;
-        }
-      }>,
-      orderBy?: Record<keyof T, 'asc' | 'desc'>,
-    },
-  ): Promise<{
+  async findFirst<S extends keyof T>(options: FindOneOptions<T, S>): Promise<{
     [key in S]: T[key];
   } | undefined> {
     const newOptions = this.parseFindOptions(options);
@@ -35,20 +37,7 @@ export abstract class BasePosRepository<T extends Record<string, any>> {
     } | undefined>;
   }
 
-  async findMany<S extends keyof T>(
-    options: {
-      select?: Partial<Record<S, true>>,
-      where?: Partial<{
-        [K in keyof T]: {
-          type: 'eq' | 'ne' | 'gte' | 'gt' | 'lt' | 'lte';
-          value: T[K] | null;
-        }
-      }>,
-      orderBy?: {column: keyof T, order: 'asc' | 'desc'}[],
-      offset?: number,
-      limit?: number,
-    },
-  ): Promise<{
+  async findMany<S extends keyof T>(options: FindOneOptions<T, S> & {offset?: number; limit?: number;}): Promise<{
     [key in S]: T[key];
   }[]> {
     const newOptions = this.parseFindOptions(options);
@@ -69,7 +58,7 @@ export abstract class BasePosRepository<T extends Record<string, any>> {
     return this.firebirdService.rawQuery(query, params);
   }
 
-  private parseFindOptions(options: Record<string, any>): Record<string, any> {
+  private parseFindOptions<S extends keyof T>(options: FindOneOptions<T, S>): Record<string, any> {
     const entity = new this.entity();
     const newOptions: Record<string, any> = {};
 
@@ -87,13 +76,13 @@ export abstract class BasePosRepository<T extends Record<string, any>> {
       Object.keys(options.where).forEach(key => {
         const columnName = getColumnName(entity, key);
 
-        (newOptions.where as Record<string, any>)[columnName !== undefined ? columnName : key] = options.where[key];
+        (newOptions.where as Record<string, any>)[columnName !== undefined ? columnName : key] = options.where![key];
       });
     }
 
     if(options.orderBy) {
       newOptions.orderBy = options.orderBy.map(({column, order}) => ({
-        column: getColumnName(entity, column),
+        column: getColumnName(entity, column as string),
         order,
       }));
     }

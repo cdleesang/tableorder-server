@@ -1,11 +1,11 @@
 import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import * as Firebird from '@oz-k/node-firebird-cp949';
 import { OPTION_INJECT_KEY } from './constants/option-inject-key.constant';
-import type { FireBirdOptions } from './types/fire-bird-options.type';
+import type { FireBirdOptions } from '../pos-repository/types/fire-bird-options.type';
 
 @Injectable()
 export class FirebirdService implements OnModuleInit, OnModuleDestroy {
-  private pool: Firebird.ConnectionPool;
+  private pool!: Firebird.ConnectionPool;
 
   constructor(
     @Inject(OPTION_INJECT_KEY) private readonly options: FireBirdOptions,
@@ -30,10 +30,10 @@ export class FirebirdService implements OnModuleInit, OnModuleDestroy {
       orderBy?: {column: string, order: 'asc' | 'desc'}[],
     },
   ): Promise<Record<string, any> | undefined> {
-    return (await this.findMany(table, {
+    return this.findMany(table, {
       ...options,
       limit: 1,
-    }))?.[0];
+    }).then(result => result?.[0]);
   }
 
   async findMany(

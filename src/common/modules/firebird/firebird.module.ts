@@ -1,7 +1,7 @@
 import { type DynamicModule, type ModuleMetadata } from '@nestjs/common';
 import { OPTION_INJECT_KEY } from './constants/option-inject-key.constant';
 import { FirebirdService } from './firebird.service';
-import type { FireBirdOptions } from './types/fire-bird-options.type';
+import type { FireBirdOptions } from '../pos-repository/types/fire-bird-options.type';
 
 export class FirebirdModule {
   static forRoot(options: FireBirdOptions): DynamicModule {

@@ -1,8 +1,9 @@
 import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
-import { ConfigService } from '../../config/config.service';
-import { GetAllCartItems } from './types/cart-response.type';
+import { CartItem } from 'sdk/structures/CartItem';
 import { LegacyPrismaService } from '../../common/modules/prisma/legacy-prisma.service';
 import { SelversClientService } from '../../common/modules/selvers-client/selvers-client.service';
+import { ConfigService } from '../../config/config.service';
+import { GetAllCartItems } from './types/cart-response.type';
 
 @Injectable()
 export class CartService {
@@ -30,7 +31,7 @@ export class CartService {
           name: item.FoodPriceOpt.opt_name || '',
           price: parseInt(item.FoodPriceOpt.opt_price, 10) || 0,
         },
-        menuSubOptions: item.FoodOpt.reduce((prev, next) => {
+        menuSubOptions: item.FoodOpt.reduce<CartItem['menuSubOptions']>((prev, next) => {
           return Array.isArray(next)
             ? prev
             : [

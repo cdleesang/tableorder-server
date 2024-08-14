@@ -31,7 +31,7 @@ export class SelversOrderClient extends SelversWWWClient {
    * 특정일 후의 주문 내역만 필터링하는 함수
    */
   private filterOrderHistoryAfterCreatedAt(orderHistory: OrderHistoryResponse, createdAt: Date): OrderHistoryResponse {
-    const search = (left: number, right: number) => {
+    const search = (left: number, right: number): number => {
       if(left > right) return left;
 
       const mid = Math.floor((left + right) / 2);

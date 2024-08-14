@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BasePosRepository } from 'src/common/modules/firebird/base-pos.repository';
+import { BasePosRepository } from 'src/common/modules/pos-repository/base-pos.repository';
 import { FirebirdService } from 'src/common/modules/firebird/firebird.service';
 import { Table } from 'src/table/domain/models/table';
 import { TableRepository } from 'src/table/ports/out/table-repository';
