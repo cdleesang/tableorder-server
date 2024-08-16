@@ -20,7 +20,7 @@ export class OrderService {
 
   async getAllOrderHistories(tableId: number, enteredAt: string & typia.tags.Format<'date-time'>): Promise<GetAllOrderHistoriesResponse> {
     const storeId = this.configService.get('STORE_ID');
-    const result = await this.prismaService.table.findUnique({
+    const result = await this.prismaService.selversTable.findUnique({
       select: {storeTableId: true},
       where: {id: tableId},
     });
@@ -97,7 +97,7 @@ export class OrderService {
     }[],
   ): Promise<true> {
     const storeId = this.configService.get('STORE_ID');
-    const result = await this.prismaService.table.findUnique({
+    const result = await this.prismaService.selversTable.findUnique({
       select: {
         storeTableId: true,
         memberId: true,

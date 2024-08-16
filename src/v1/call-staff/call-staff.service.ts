@@ -33,7 +33,7 @@ export class CallStaffService {
     }[],
   ): Promise<true> {
     try {
-      const result = await this.prismaService.table.findFirst({
+      const result = await this.prismaService.selversTable.findFirst({
         select: { storeTableId: true },
         where: { id: tableId },
       });
@@ -48,7 +48,7 @@ export class CallStaffService {
         })),
       );
     } catch(err) {
-      if(err instanceof EntityNotFoundErrors.Table) {
+      if(err instanceof EntityNotFoundErrors.SelversTable) {
         throw new NotFoundException('일치하는 테이블 번호를 찾을 수 없습니다.');
       }
 

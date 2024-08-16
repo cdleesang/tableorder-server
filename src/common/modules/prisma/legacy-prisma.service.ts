@@ -12,7 +12,7 @@ export class LegacyPrismaService extends LegacyExtendedPrismaClient implements O
   }
 
   async getMemberIdByTableId(tableId: number) {
-    const result = await this.table.findUnique({
+    const result = await this.selversTable.findUnique({
       select: {memberId: true},
       where: {id: tableId},
     });
@@ -23,7 +23,7 @@ export class LegacyPrismaService extends LegacyExtendedPrismaClient implements O
   async onModuleInit() {
     await this.$connect();
 
-    const accounts = await this.table.findMany({
+    const accounts = await this.selversTable.findMany({
       select: {
         signInId: true,
         password: true,
@@ -47,7 +47,7 @@ export class LegacyPrismaService extends LegacyExtendedPrismaClient implements O
 
     // NOTE: SQLite 사용으로 createMany 메서드를 사용할 수 없어 트랜잭션으로 처리
     await this.$transaction([
-      ...loginInfos.map(loginInfo => this.table.update({
+      ...loginInfos.map(loginInfo => this.selversTable.update({
         where: { id: parseInt(loginInfo.StoreTable.seq, 10) },
         data: {
           memberId: loginInfo.Member.id,

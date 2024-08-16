@@ -1,0 +1,13 @@
+model SelversTable {
+  // Selvers Shared Preference seq
+  id           Int     @id
+  // Selvers Shared Preference member_id
+  memberId     String? @unique
+  // Selvers Shared Preference store_table_id
+  storeTableId String? @unique
+
+  signInId String
+  password String
+
+  @@map("Table")
+}
