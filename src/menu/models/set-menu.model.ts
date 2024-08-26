@@ -32,11 +32,17 @@ export interface SetMenu {
     value: number;
   } | null;
 
+  /** 활성화 가능한 시간 범위 */
+  availableTimeRange: AvailableTimeRange | null;
+  
+  /** 활성화 가능한 날짜 범위 */
+  availableDateRange: AvailableDateRange | null;
+
   /**
    * 라디오 버튼으로 선택 가능한 메뉴 그룹 목록
    */
   menuGroups: {
-    id: number;
+    id: string;
 
     /** 메뉴 그룹명 */
     name: string | null;
@@ -51,15 +57,9 @@ export interface SetMenu {
     menus: Pick<Menu, 'id' | 'thumbnailImageUrl' | 'name' | 'price' | 'tags' | 'availableDateRange' | 'availableTimeRange' | 'soldOut' | 'isDisplay'>[];
   }[];
 
-  /** 활성화 가능한 시간 범위 */
-  availableTimeRange: AvailableTimeRange | null;
-
-  /** 활성화 가능한 날짜 범위 */
-  availableDateRange: AvailableDateRange | null;
-
   /** 옵션 그룹 목록 */
   optionGroups: {
-    id: number;
+    id: string;
 
     /** 옵션 그룹명 */
     name: string;
@@ -76,7 +76,7 @@ export interface SetMenu {
     } | null;
 
     /** 옵션 목록 */
-    options: MenuOption[];
+    options: Omit<MenuOption, 'createdAt' | 'updatedAt'>[];
   }[];
 
   /** 노출 여부 */
