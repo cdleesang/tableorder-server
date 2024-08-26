@@ -1,7 +1,7 @@
 import { AvailableDateRange } from 'src/common/utils/available-date-range.util';
 import { AvailableTimeRange } from 'src/common/utils/available-time-range.util';
-import { Menu } from './menu.model';
 import { MenuOption } from './menu-option.model';
+import { Menu } from './menu.model';
 
 /**
  * 세트 메뉴
@@ -48,7 +48,7 @@ export interface SetMenu {
      */
     basePrice: number;
 
-    menus: Omit<Menu, 'optionGroups' | 'category'>[];
+    menus: Pick<Menu, 'id' | 'thumbnailImageUrl' | 'name' | 'price' | 'tags' | 'availableDateRange' | 'availableTimeRange' | 'soldOut' | 'isDisplay'>[];
   }[];
 
   /** 활성화 가능한 시간 범위 */
@@ -82,11 +82,17 @@ export interface SetMenu {
   /** 노출 여부 */
   isDisplay: boolean;
 
+  /** 정렬 순서 */
+  order: number;
+
   createdAt: Date;
   updatedAt: Date;
 }
 
 export namespace SetMenu {
+  export type MenuGroup = SetMenu['menuGroups'][number];
+  export type OptionGroup = SetMenu['optionGroups'][number];
+
   export function isActive({isDisplay, availableTimeRange, availableDateRange, menuGroups}: Pick<SetMenu, 'isDisplay' | 'availableTimeRange' | 'availableDateRange' | 'menuGroups'>): boolean {
     if(!isDisplay) return false;
     if(availableTimeRange && !AvailableTimeRange.isActive(availableTimeRange)) return false;
@@ -97,7 +103,11 @@ export namespace SetMenu {
     return true;
   }
 
-  export function isSoldOut({menuGroups}: Pick<SetMenu, 'menuGroups'>): boolean {
+  export function isSoldOut({menuGroups}: {
+    menuGroups: {
+      menus: Pick<Menu, 'soldOut'>[];
+    }[];
+  }): boolean {
     // 모든 메뉴가 품절 상태인 메뉴 그룹이 하나라도 있으면 품절 처리
     return menuGroups.some(({menus}) => menus.every(menu => Menu.isSoldOut(menu)));
   }
@@ -107,7 +117,14 @@ export namespace SetMenu {
    * 고정 금액 할인이 설정되어 있으면 할인 금액을 반환하고
    * 그렇지 않으면 메뉴 그룹의 최소 가격의 합에 할인가를 적용한 금액을 반환
    */
-  export function calculateMinimumPrice({discount, menuGroups}: Pick<SetMenu, 'discount' | 'menuGroups'>): number {
+  export function calculateMinimumPrice({discount, menuGroups}: {
+    discount: SetMenu['discount'];
+    menuGroups: {
+      menus: {
+        price: number;
+      }[];
+    }[];
+  }): number {
     if(discount && discount.type === 'fixed') {
       return discount.value;
     }

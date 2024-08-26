@@ -57,7 +57,7 @@ export interface Menu {
     } | null;
 
     /** 옵션 목록 */
-    options: MenuOption[];
+    options: Omit<MenuOption, 'createdAt' | 'updatedAt'>[];
   }[];
 
   /** 품절 상태 */
@@ -68,6 +68,9 @@ export interface Menu {
   /** 노출 여부 */
   isDisplay: boolean;
 
+  /** 정렬 순서 */
+  order: number;
+
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
@@ -75,6 +78,20 @@ export interface Menu {
 
 export namespace Menu {
   export type OptionGroup = Menu['optionGroups'][number];
+
+  /** 옵션 그룹이 유효한지 확인 */
+  export function isValidOptionGroup(optionGroup: Pick<Menu['optionGroups'][number], 'multiSelect'>): boolean {
+    if(optionGroup.multiSelect) {
+      const {min, max} = optionGroup.multiSelect;
+
+      // 최대 선택 가능 수는 1 이상이어야 함
+      if(max !== null && max < 1) return false;
+      // 최소 선택 가능 수는 최대 선택 가능 수보다 작거나 같아야 함
+      if(min !== null && max !== null && min > max) return false;
+    }
+
+    return true;
+  }
 
   export function isActive({isDisplay, availableTimeRange, availableDateRange}: Pick<Menu, 'isDisplay' | 'availableTimeRange' | 'availableDateRange'>): boolean {
     if(!isDisplay) return false;

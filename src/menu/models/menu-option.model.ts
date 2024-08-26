@@ -11,6 +11,9 @@ export interface MenuOption {
   soldOut: {
     releaseDate: Date | null;
   } | false;
+
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export namespace MenuOption {
