@@ -1,3 +1,4 @@
+import typia from 'typia';
 import { secondsToTimeFormat } from './seconds-to-time-format.util';
 
 export interface AvailableTimeRange {
@@ -22,11 +23,13 @@ export namespace AvailableTimeRange {
       || (startTimeInSeconds <= currentSeconds + 24 * 3600 && currentSeconds + 24 * 3600 < endTimeInSeconds);
   }
 
+  type RawTime = string & typia.tags.Pattern<'^(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d$'>;
+
   export interface Raw {
     /* 활성화 시작 시간(HH:mm:ss UTC) */
-    startTime: string;
+    startTime: RawTime;
     /* 활성화 종료 시간(HH:mm:ss UTC) */
-    endTime: string;
+    endTime: RawTime;
   }
 
   /** AvailableTimeRange 객체를 문자열로 변환 */
@@ -42,9 +45,8 @@ export namespace AvailableTimeRange {
    * @throws {Error} 시간 형식이 잘못된 경우
    */
   export function parse({startTime, endTime}: Raw): AvailableTimeRange {
-    const timePattern = /^\d{2}:\d{2}:\d{2}$/;
-    if(!timePattern.test(startTime)) throw new Error('startTime must be in the format of HH:mm:ss', {cause: 'startTime'});
-    if(!timePattern.test(endTime)) throw new Error('endTime must be in the format of HH:mm:ss', {cause: 'endTime'});
+    if(!typia.is<RawTime>(startTime)) throw new Error('startTime must be in the format of HH:mm:ss', {cause: 'startTime'});
+    if(!typia.is<RawTime>(endTime)) throw new Error('endTime must be in the format of HH:mm:ss', {cause: 'endTime'});
 
     const [startHour, startMinute, startSecond] = startTime.split(':').map(time => parseInt(time, 10));
     const [endHour, endMinute, endSecond] = endTime.split(':').map(time => parseInt(time, 10));
