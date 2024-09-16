@@ -1,10 +1,8 @@
 import { TypedBody, TypedException, TypedParam, TypedQuery, TypedRoute } from '@nestia/core';
 import { Controller, ForbiddenException, UseGuards, VERSION_NEUTRAL } from '@nestjs/common';
-import { TableId } from '../auth/decorators/table-id.decorator';
-import { TableIdGuard } from '../auth/table-id.guard';
+import { TableId, TableIdGuard } from '../auth';
 import { OrderService } from './order.service';
-import { GetAllOrderHistoriesQuery, OrderCartBody, OrderImmediatelyBody } from './types/order-request.type';
-import { GetAllOrderHistoriesResponse, GetOrderHistoriesByTableId } from './types/order-response.type';
+import { GetAllOrderHistoriesDto, GetOrderHistoriesByTableIdDto, OrderCartDto, OrderImmediatelyDto } from './dto';
 
 @Controller({path: 'order', version: VERSION_NEUTRAL})
 export class OrderController {
@@ -19,7 +17,7 @@ export class OrderController {
    */
   @TypedRoute.Get()
   @UseGuards(TableIdGuard)
-  async getAllOrderHistories(@TableId() tableId: number, @TypedQuery() query: GetAllOrderHistoriesQuery): Promise<GetAllOrderHistoriesResponse> {
+  async getAllOrderHistories(@TableId() tableId: number, @TypedQuery() query: GetAllOrderHistoriesDto.Request): Promise<GetAllOrderHistoriesDto.Response> {
     return this.orderService.getAllOrderHistories(tableId, query.enteredAt);
   }
 
@@ -34,7 +32,7 @@ export class OrderController {
   @TypedRoute.Get(':tableId')
   @TypedException<ForbiddenException>(403, '요청한 테이블 번호와 로그인한 테이블 번호가 일치하지 않음')
   @UseGuards(TableIdGuard)
-  async getOrderHistoriesByTableId(@TableId() loggedInTableId: number, @TypedParam('tableId') tableId: number): Promise<GetOrderHistoriesByTableId> {
+  async getOrderHistoriesByTableId(@TableId() loggedInTableId: number, @TypedParam('tableId') tableId: number): Promise<GetOrderHistoriesByTableIdDto.Response> {
     return this.orderService.getOrderHistoriesByTableId(loggedInTableId, tableId);
   }
 
@@ -46,7 +44,7 @@ export class OrderController {
    */
   @TypedRoute.Post()
   @UseGuards(TableIdGuard)
-  async orderImmediately(@TableId() tableId: number, @TypedBody() body: OrderImmediatelyBody) {
+  async orderImmediately(@TableId() tableId: number, @TypedBody() body: OrderImmediatelyDto.Request) {
     return this.orderService.orderImmediately(tableId, body);
   }
 
@@ -58,7 +56,7 @@ export class OrderController {
    */
   @TypedRoute.Post('cart')
   @UseGuards(TableIdGuard)
-  async orderCart(@TableId() tableId: number, @TypedBody() body: OrderCartBody) {
+  async orderCart(@TableId() tableId: number, @TypedBody() body: OrderCartDto.Request) {
     return this.orderService.order(tableId, body.cartItems);
   }
 }

@@ -13,10 +13,10 @@
  * }, 'c', 3);
  * // defaultValue === 3
  */
-export function ktWhen<V, M extends Record<string, any>, E = undefined>(
+export function ktWhen<V, M extends Record<string, any>, E>(
   value: V,
   switchMap: M,
-  elseValue?: E,
+  elseValue: E,
 ): V extends keyof M ? M[V] : E {
   return (switchMap[value as keyof M] ?? elseValue) as V extends keyof M ? M[V] : E;
 }

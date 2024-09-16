@@ -1,11 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { SelversAuthClient } from './clients/selvers-auth-client';
-import { SelversCartClient } from './clients/selvers-cart-client';
-import { SelversEasycallClient } from './clients/selvers-easycall-client';
-import { SelversFoodClient } from './clients/selvers-food-client';
-import { SelversStoreClient } from './clients/selvers-store-client';
-import { SelversOrderClient } from './clients/selvers-order-client';
+import { SelversAuthClient, SelversCartClient, SelversEasycallClient, SelversFoodClient, SelversOrderClient, SelversStoreClient } from './clients';
 
 @Injectable()
 export class SelversClientService {

@@ -1,10 +1,8 @@
 import { TypedBody, TypedRoute } from '@nestia/core';
 import { Controller, UseGuards, VERSION_NEUTRAL } from '@nestjs/common';
+import { TableId, TableIdGuard } from '../auth';
 import { CallStaffService } from './call-staff.service';
-import { CallStaffBody } from './types/call-staff-request.type';
-import { GetCallStaffOptionsResponse } from './types/call-staff-response.type';
-import { TableIdGuard } from '../auth/table-id.guard';
-import { TableId } from '../auth/decorators/table-id.decorator';
+import { CallStaffDto, GetCallStaffOptionsDto } from './dto';
 
 @Controller({path: 'call-staff', version: VERSION_NEUTRAL})
 export class CallStaffController {
@@ -16,7 +14,7 @@ export class CallStaffController {
    * @tag 직원호출
    */
   @TypedRoute.Get('option')
-  getCallStaffOptions(): Promise<GetCallStaffOptionsResponse> {
+  getCallStaffOptions(): Promise<GetCallStaffOptionsDto.Response> {
     return this.callStaffService.getCallOptions();
   }
 
@@ -28,7 +26,7 @@ export class CallStaffController {
    */
   @TypedRoute.Post()
   @UseGuards(TableIdGuard)
-  callStaff(@TableId() tableId: number, @TypedBody() body: CallStaffBody): Promise<true> {
+  callStaff(@TableId() tableId: number, @TypedBody() body: CallStaffDto.Request): Promise<true> {
     return this.callStaffService.callStaff(tableId, body.options);
   }
 }

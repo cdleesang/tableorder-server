@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from 'src/config/config.module';
-import { ConfigService } from 'src/config/config.service';
-import { FirebirdModule } from '../firebird/firebird.module';
+import { ConfigModule, ConfigService } from 'src/config';
+import { FirebirdModule } from '../firebird';
 import { PosHTableRepository } from './pos-h-table.repository';
 
 @Module({

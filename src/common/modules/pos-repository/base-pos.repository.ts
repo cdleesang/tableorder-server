@@ -1,6 +1,5 @@
-import { getTransform } from './decorators/transform.decorator';
-import { FirebirdService } from '../firebird/firebird.service';
-import { getColumnName } from './decorators/column.decorator';
+import { FirebirdService } from '../firebird';
+import { getColumnName, getTransform } from './decorators';
 
 interface FindOneOptions<T extends Record<string, any>, S extends keyof T> {
   select?: Partial<Record<S, true>>;

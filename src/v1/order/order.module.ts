@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { PosRepositoryModule } from 'src/common/modules/pos-repository/pos-repository.module';
-import { SelversClientModule } from 'src/common/modules/selvers-client/selvers-client.module';
+import { PosRepositoryModule } from 'src/common/modules/pos-repository';
+import { SelversClientModule } from 'src/common/modules/selvers-client';
 import { CartModule } from '../cart/cart.module';
 import { OrderController } from './order.controller';
 import { OrderService } from './order.service';

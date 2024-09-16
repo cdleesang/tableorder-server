@@ -1,8 +1,7 @@
 import { TypedException, TypedParam, TypedQuery, TypedRoute } from '@nestia/core';
 import { Controller, NotFoundException, VERSION_NEUTRAL } from '@nestjs/common';
+import { GetMenuCategoriesDto, GetMenuDetailByIdDto, GetPaginatedMenusByCategoryDto } from './dto';
 import { MenuService } from './menu.service';
-import { GetMenuCategoriesResponse, GetMenuDetailById, GetPaginatedMenusByCategory } from './types/menu-response.type';
-import { GetPaginatedMenusByCategoryQuery } from './types/menu-request.type';
 
 @Controller({path: 'menu', version: VERSION_NEUTRAL})
 export class MenuController {
@@ -14,7 +13,7 @@ export class MenuController {
    * @tag 메뉴
    */
   @TypedRoute.Get('category')
-  async getMenuCategories(): Promise<GetMenuCategoriesResponse> {
+  async getMenuCategories(): Promise<GetMenuCategoriesDto.Response> {
     return this.menuService.getMenuCategories();
   }
 
@@ -26,8 +25,8 @@ export class MenuController {
   @TypedRoute.Get()
   @TypedException<NotFoundException>(404, '해당 페이지를 찾을 수 없음')
   async getPaginatedMenusByCategory(
-    @TypedQuery() query: GetPaginatedMenusByCategoryQuery,
-  ): Promise<GetPaginatedMenusByCategory> {
+    @TypedQuery() query: GetPaginatedMenusByCategoryDto.Request,
+  ): Promise<GetPaginatedMenusByCategoryDto.Response> {
     return this.menuService.getPaginatedMenusByCategory(query.page, query.categoryId, query.subCategoryId);
   }
 
@@ -37,7 +36,7 @@ export class MenuController {
    * @tag 메뉴
    */
   @TypedRoute.Get(':id')
-  async getMenuDetailById(@TypedParam('id') menuId: number): Promise<GetMenuDetailById> {
+  async getMenuDetailById(@TypedParam('id') menuId: number): Promise<GetMenuDetailByIdDto.Response> {
     return this.menuService.getMenuDetailById(menuId);
   }
 }

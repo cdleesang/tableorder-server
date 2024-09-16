@@ -1,7 +1,6 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from 'src/config/config.module';
-import { ConfigService } from 'src/config/config.service';
+import { ConfigModule, ConfigService } from 'src/config';
 import { SelversClientService } from './selvers-client.service';
 
 @Module({

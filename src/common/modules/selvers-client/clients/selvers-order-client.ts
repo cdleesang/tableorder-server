@@ -1,7 +1,6 @@
-import { NumericString } from 'src/common/types/numeric-string.type';
-import { CartId, OrderSheetId, SelversDateTime, StoreId } from '../types/selvers-client.type';
-import { CreateOrderSheetResponse, OrderHistoryResponse, OrderResponse } from '../types/selvers-order-response.type';
-import { responseErrorHandle } from '../utils/response-error-handle.util';
+import { NumericString } from 'src/common/types';
+import { CartId, CreateOrderSheetResponse, OrderHistoryResponse, OrderResponse, OrderSheetId, SelversDateTime, StoreId } from '../types';
+import { responseErrorHandle } from '../utils';
 import { SelversWWWClient } from './selvers-www-client';
 
 export class SelversOrderClient extends SelversWWWClient {

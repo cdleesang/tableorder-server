@@ -1,5 +1,5 @@
-import { TOrderMainImagesResponse } from '../types/selvers-store-response.type';
-import { responseErrorHandle } from '../utils/response-error-handle.util';
+import { TOrderMainImagesResponse } from '../types';
+import { responseErrorHandle } from '../utils';
 import { SelversWWWClient } from './selvers-www-client';
 
 export class SelversStoreClient extends SelversWWWClient {

@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Request } from 'express';
 import { Observable } from 'rxjs';
-import { TableIdRequest } from './types/table-id-request.type';
+import { TableIdRequest } from '../types';
 
 @Injectable()
 export class TableIdGuard implements CanActivate {

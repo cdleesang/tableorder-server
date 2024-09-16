@@ -1,8 +1,7 @@
-import { PageNotFoundError } from '../errors/page-not-found.error';
+import { PageNotFoundError } from '../errors';
+import { ManyMenuResponse, MenuCategoryResponse, MenuDetailResponse, NewStoreFoodsResponse, StoreId } from '../types';
+import { responseErrorHandle } from '../utils';
 import { SelversWWWClient } from './selvers-www-client';
-import { ManyMenuResponse, MenuCategoryResponse, MenuDetailResponse, NewStoreFoodsResponse } from '../types/selvers-food-response.type';
-import { StoreId } from '../types/selvers-client.type';
-import { responseErrorHandle } from '../utils/response-error-handle.util';
 
 export class SelversFoodClient extends SelversWWWClient {
   /**

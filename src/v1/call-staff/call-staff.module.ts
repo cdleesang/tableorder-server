@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { SelversClientModule } from 'src/common/modules/selvers-client/selvers-client.module';
+import { SelversClientModule } from 'src/common/modules/selvers-client';
 import { CallStaffController } from './call-staff.controller';
 import { CallStaffService } from './call-staff.service';
 

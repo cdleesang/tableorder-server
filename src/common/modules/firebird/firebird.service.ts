@@ -1,7 +1,7 @@
 import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import * as Firebird from '@oz-k/node-firebird-cp949';
-import { OPTION_INJECT_KEY } from './constants/option-inject-key.constant';
-import type { FireBirdOptions } from '../pos-repository/types/fire-bird-options.type';
+import { OPTION_INJECT_KEY } from './constants';
+import type { FireBirdOptions } from './types';
 
 @Injectable()
 export class FirebirdService implements OnModuleInit, OnModuleDestroy {

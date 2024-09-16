@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
+import { SelversClientModule } from '../selvers-client';
 import { LegacyPrismaService } from './legacy-prisma.service';
-import { SelversClientModule } from '../selvers-client/selvers-client.module';
 import { PrismaService } from './prisma.service';
 
 @Global()

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PageNotFoundError } from '../errors/page-not-found.error';
-import { responseErrorHandle } from '../utils/response-error-handle.util';
+import { PageNotFoundError } from '../errors';
+import { BaseCartResponse, CartIndexResponse, CartItemCountResponse } from '../types';
+import { responseErrorHandle } from '../utils';
 import { SelversWWWClient } from './selvers-www-client';
-import { BaseCartResponse, CartIndexResponse, CartItemCountResponse } from '../types/selvers-cart-response.type';
 
 @Injectable()
 export class SelversCartClient extends SelversWWWClient {

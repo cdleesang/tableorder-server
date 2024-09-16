@@ -2,7 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { ConfigModule as NestConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { ConfigService } from './config.service';
-import { Environment } from './types/environment.type';
+import { Environment } from './types';
 
 @Global()
 @Module({

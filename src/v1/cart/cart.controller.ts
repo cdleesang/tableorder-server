@@ -1,10 +1,8 @@
 import { TypedBody, TypedException, TypedParam, TypedRoute } from '@nestia/core';
 import { ConflictException, Controller, UseGuards, VERSION_NEUTRAL } from '@nestjs/common';
-import { TableId } from '../auth/decorators/table-id.decorator';
-import { TableIdGuard } from '../auth/table-id.guard';
+import { TableId, TableIdGuard } from '../auth';
 import { CartService } from './cart.service';
-import { AddCartItemBody } from './types/cart-request.type';
-import { GetAllCartItems } from './types/cart-response.type';
+import { AddCartItemDto, GetAllCartItemsDto } from './dto';
 
 @Controller({path: 'cart', version: VERSION_NEUTRAL})
 export class CartController {
@@ -18,7 +16,7 @@ export class CartController {
    */
   @TypedRoute.Get()
   @UseGuards(TableIdGuard)
-  async getAllCartItems(@TableId() tableId: number): Promise<GetAllCartItems> {
+  async getAllCartItems(@TableId() tableId: number): Promise<GetAllCartItemsDto.Response> {
     return this.cartService.getAllCartItems(tableId);
   }
 
@@ -32,7 +30,7 @@ export class CartController {
   @TypedRoute.Post()
   @TypedException<ConflictException>(409, '상품을 더이상 추가할 수 없음')
   @UseGuards(TableIdGuard)
-  async addItem(@TableId() tableId: number, @TypedBody() body: AddCartItemBody): Promise<number> {
+  async addItem(@TableId() tableId: number, @TypedBody() body: AddCartItemDto.Request): Promise<number> {
     return this.cartService.addItem(tableId, {
       ...body,
       id: body.menuId,

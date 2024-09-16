@@ -1,5 +1,5 @@
-import { TableLoginResponse } from '../types/selvers-auth-response.type';
-import { responseErrorHandle } from '../utils/response-error-handle.util';
+import { TableLoginResponse } from '../types';
+import { responseErrorHandle } from '../utils';
 import { SelversWWWClient } from './selvers-www-client';
 
 export class SelversAuthClient extends SelversWWWClient {

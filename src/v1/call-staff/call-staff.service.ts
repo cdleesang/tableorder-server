@@ -1,9 +1,8 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { ConfigService } from '../../config/config.service';
-import { GetCallStaffOptionsResponse } from './types/call-staff-response.type';
-import { EntityNotFoundErrors } from '../../common/modules/prisma/errors/entity-not-found.error';
-import { LegacyPrismaService } from '../../common/modules/prisma/legacy-prisma.service';
-import { SelversClientService } from '../../common/modules/selvers-client/selvers-client.service';
+import { EntityNotFoundErrors, LegacyPrismaService } from '../../common/modules/prisma';
+import { SelversClientService } from '../../common/modules/selvers-client';
+import { ConfigService } from '../../config';
+import { GetCallStaffOptionsDto } from './dto';
 
 @Injectable()
 export class CallStaffService {
@@ -13,7 +12,7 @@ export class CallStaffService {
     private readonly selversClientService: SelversClientService,
   ) {}
 
-  async getCallOptions(): Promise<GetCallStaffOptionsResponse> {
+  async getCallOptions(): Promise<GetCallStaffOptionsDto.Response> {
     const storeId = this.configService.get('STORE_ID');
     const data = await this.selversClientService.easycall.getCallStaffOptions(storeId);
 

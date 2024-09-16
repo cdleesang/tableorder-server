@@ -1,7 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { DatabaseError } from '../errors/database.error';
-import { EntityNotFoundErrors } from '../errors/entity-not-found.error';
-import { UniqueFieldDuplicateError } from '../errors/unique-field-duplicate.error';
+import { DatabaseError, EntityNotFoundErrors, UniqueFieldDuplicateError } from '../errors';
 
 export const legacyErrorHandleExtension = Prisma.defineExtension({
   name: 'legacy error handle',

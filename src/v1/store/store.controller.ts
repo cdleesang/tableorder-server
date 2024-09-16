@@ -1,7 +1,7 @@
 import { TypedRoute } from '@nestia/core';
 import { Controller, VERSION_NEUTRAL } from '@nestjs/common';
+import { GetAllSlideImagesDto } from './dto';
 import { StoreService } from './store.service';
-import { GetAllSlideImagesResponse } from './types/store-response.type';
 
 @Controller({path: 'store', version: VERSION_NEUTRAL})
 export class StoreController {
@@ -13,7 +13,7 @@ export class StoreController {
    * @tag 상점
    */
   @TypedRoute.Get('slide-image')
-  async getAllSlideImages(): Promise<GetAllSlideImagesResponse> {
+  async getAllSlideImages(): Promise<GetAllSlideImagesDto.Response> {
     return this.storeService.getAllSlideImages();
   }
 }

@@ -1,9 +1,8 @@
 import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
-import { CartItem } from 'sdk/structures/CartItem';
-import { LegacyPrismaService } from '../../common/modules/prisma/legacy-prisma.service';
-import { SelversClientService } from '../../common/modules/selvers-client/selvers-client.service';
-import { ConfigService } from '../../config/config.service';
-import { GetAllCartItems } from './types/cart-response.type';
+import { LegacyPrismaService } from '../../common/modules/prisma';
+import { SelversClientService } from '../../common/modules/selvers-client';
+import { ConfigService } from '../../config';
+import { GetAllCartItemsDto } from './dto';
 
 @Injectable()
 export class CartService {
@@ -13,7 +12,7 @@ export class CartService {
     private readonly selversClientService: SelversClientService,
   ) {}
 
-  async getAllCartItems(tableId: number): Promise<GetAllCartItems> {
+  async getAllCartItems(tableId: number): Promise<GetAllCartItemsDto.Response> {
     const memberId = await this.prismaService.getMemberIdByTableId(tableId);
 
     const data = await this.selversClientService.cart.getManyCartItem(memberId, 1);
@@ -31,7 +30,7 @@ export class CartService {
           name: item.FoodPriceOpt.opt_name || '',
           price: parseInt(item.FoodPriceOpt.opt_price, 10) || 0,
         },
-        menuSubOptions: item.FoodOpt.reduce<CartItem['menuSubOptions']>((prev, next) => {
+        menuSubOptions: item.FoodOpt.reduce<GetAllCartItemsDto.CartItem['menuSubOptions']>((prev, next) => {
           return Array.isArray(next)
             ? prev
             : [

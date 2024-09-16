@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ConfigService } from '../../config/config.service';
-import { GetMenuCategoriesResponse, GetMenuDetailById, GetPaginatedMenusByCategory } from './types/menu-response.type';
-import { PageNotFoundError } from '../../common/modules/selvers-client/errors/page-not-found.error';
-import { SelversClientService } from '../../common/modules/selvers-client/selvers-client.service';
+import { PageNotFoundError, SelversClientService } from '../../common/modules/selvers-client';
+import { ConfigService } from '../../config';
+import { GetMenuCategoriesDto, GetMenuDetailByIdDto, GetPaginatedMenusByCategoryDto } from './dto';
 
 @Injectable()
 export class MenuService {
@@ -11,7 +10,7 @@ export class MenuService {
     private readonly selversClientService: SelversClientService,
   ) {}
 
-  async getMenuCategories(): Promise<GetMenuCategoriesResponse> {
+  async getMenuCategories(): Promise<GetMenuCategoriesDto.Response> {
     const storeId = this.configService.get('STORE_ID');
     const storeMemberId = this.configService.get('STORE_MEMBER_ID');
 
@@ -31,7 +30,7 @@ export class MenuService {
     });
   }
 
-  async getPaginatedMenusByCategory(page: number, categoryId: number, subCategoryId?: number): Promise<GetPaginatedMenusByCategory> {
+  async getPaginatedMenusByCategory(page: number, categoryId: number, subCategoryId?: number): Promise<GetPaginatedMenusByCategoryDto.Response> {
     const storeId = this.configService.get('STORE_ID');
 
     const data = await (async () => {
@@ -60,7 +59,7 @@ export class MenuService {
     };
   }
 
-  async getMenuDetailById(menuId: number): Promise<GetMenuDetailById> {
+  async getMenuDetailById(menuId: number): Promise<GetMenuDetailByIdDto.Response> {
     const {food: {Food: data}} = await this.selversClientService.food.getMenuDetailById(menuId);
 
     return {

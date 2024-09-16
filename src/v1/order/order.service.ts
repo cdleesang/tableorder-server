@@ -1,12 +1,11 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import typia from 'typia';
-import { ConfigService } from '../../config/config.service';
+import { PosHTableRepository } from '../../common/modules/pos-repository';
+import { LegacyPrismaService } from '../../common/modules/prisma';
+import { SelversClientService } from '../../common/modules/selvers-client';
+import { ConfigService } from '../../config';
 import { CartService } from '../cart/cart.service';
-import { OrderImmediatelyBody } from './types/order-request.type';
-import { GetAllOrderHistoriesResponse, GetOrderHistoriesByTableId } from './types/order-response.type';
-import { PosHTableRepository } from '../../common/modules/pos-repository/pos-h-table.repository';
-import { LegacyPrismaService } from '../../common/modules/prisma/legacy-prisma.service';
-import { SelversClientService } from '../../common/modules/selvers-client/selvers-client.service';
+import { GetAllOrderHistoriesDto, GetOrderHistoriesByTableIdDto, OrderImmediatelyDto } from './dto';
 
 @Injectable()
 export class OrderService {
@@ -18,7 +17,7 @@ export class OrderService {
     private readonly posHTableRepository: PosHTableRepository,
   ) {}
 
-  async getAllOrderHistories(tableId: number, enteredAt: string & typia.tags.Format<'date-time'>): Promise<GetAllOrderHistoriesResponse> {
+  async getAllOrderHistories(tableId: number, enteredAt: string & typia.tags.Format<'date-time'>): Promise<GetAllOrderHistoriesDto.Response> {
     const storeId = this.configService.get('STORE_ID');
     const result = await this.prismaService.selversTable.findUnique({
       select: {storeTableId: true},
@@ -49,7 +48,7 @@ export class OrderService {
     };
   }
 
-  async getOrderHistoriesByTableId(loggedInTableId: number, tableId: number): Promise<GetOrderHistoriesByTableId> {
+  async getOrderHistoriesByTableId(loggedInTableId: number, tableId: number): Promise<GetOrderHistoriesByTableIdDto.Response> {
     if(loggedInTableId !== tableId) {
       throw new ForbiddenException('이 테이블의 주문내역을 조회할 권한이 없습니다.');
     }
@@ -68,7 +67,7 @@ export class OrderService {
     };
   }
 
-  async orderImmediately(tableId: number, body: OrderImmediatelyBody): Promise<true> {
+  async orderImmediately(tableId: number, body: OrderImmediatelyDto.Request): Promise<true> {
     // 즉시주문을 위한 임시 테이블 아이디
     const temporaryTableId = tableId + 100;
 

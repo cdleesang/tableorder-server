@@ -1,7 +1,6 @@
 import { HttpService } from '@nestjs/axios';
-import { EasycallCallStaffResponse, EasycallSetupListResponse } from '../types/selvers-easycall-response.type';
-import { EasycallOptionId, StoreId, TableId } from '../types/selvers-client.type';
-import { responseErrorHandle } from '../utils/response-error-handle.util';
+import { EasycallCallStaffResponse, EasycallOptionId, EasycallSetupListResponse, StoreId, TableId } from '../types';
+import { responseErrorHandle } from '../utils';
 
 export class SelversEasycallClient {
   constructor(private readonly httpService: HttpService) {}
